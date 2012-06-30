@@ -1,0 +1,10 @@
+use scrollable pref dialog
+
+find way to integrate the 2 pref activity
+
+use a new color picker with alpha support.
+
+can custom bg, alpha .
+
+put a link to the paid version in the free version
+
