@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_render_mode_text">
+        <item>Normal mode</item>
+        <item>Wireframe mode</item>
+    </string-array>
+    <string-array name="pref_render_mode_value">
+        <item>NORMAL_MODE</item>
+        <item>WIREFRAME_MODE</item>
+    </string-array>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<color name="color_pudding_default">#ff9FD867</color>
+<color name="color_background_default">#FFFFFFFF</color>
+<color name="color_background_mask_gradient_inner">#FFFFFFFF</color>
+<color name="color_background_mask_gradient_outer">#55000000</color>
+</resources>

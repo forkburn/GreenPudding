@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="menu_exit">Exit</string>
+    <string name="menu_options">Options</string>
+    <string name="pref_cat_physical_parameters_title">Physical parameters</string>
+    <string name="pref_cat_physical_parameters_summary">Physical properties of the pudding</string>
+    <string name="pref_is_gravity_enabled_key">isGravityEnabled</string>
+    <string name="pref_is_gravity_enabled_title">Gravity enabled</string>
+    <string name="pref_is_pinned_key">isPinned</string>
+    <string name="pref_is_pinned_title">Pinned to center</string>
+    <string name="pref_is_gravity_enabled_summary">Use the accelerometer-based gravity</string>
+    <string name="pref_is_pinned_summary">Whether the pudding is pinned to the center of the screen</string>
+    <string name="pref_cat_appearance_title">Appearance</string>
+    <string name="pref_cat_appearance_summary">How the graphics are rendered</string>
+    <string name="pref_render_mode_key">renderMode</string>
+    <string name="pref_render_mode_title">Rendering mode</string>
+    <string name="pref_pudding_radius_key">puddingRadius</string>
+    <string name="pref_pudding_radius_title">Radius</string>
+    <string name="pref_pudding_radius_summary">Size of the pudding</string>
+    <string name="pref_pudding_color_title">Pudding color</string>
+    <string name="pref_pudding_color_summary">Choose the color for the pudding</string>
+    <string name="pref_pudding_color_key">puddingColor</string>
+    <string name="pref_background_color_title">Background color</string>
+    <string name="pref_background_color_summary">Choose the color for the background</string>
+    <string name="pref_background_color_key">backgroundColor</string>
+    <string name="pref_number_of_nodes_title">Number of nodes</string>
+    <string name="pref_number_of_nodes_summary">Number of physical nodes. Large number may cause slowdown</string>
+    <string name="pref_number_of_nodes_key">numOfNodes</string>
+    <string name="pref_pudding_radius_default">180</string>
+    <string name="pref_number_of_nodes_default">12</string>
+</resources>

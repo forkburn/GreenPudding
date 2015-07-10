@@ -1,0 +1,71 @@
+ECLIPSE ANDROID PROJECT IMPORT SUMMARY
+======================================
+
+Manifest Merging:
+-----------------
+Your project uses libraries that provide manifests, and your Eclipse
+project did not explicitly turn on manifest merging. In Android Gradle
+projects, manifests are always merged (meaning that contents from your
+libraries' manifests will be merged into the app manifest. If you had
+manually copied contents from library manifests into your app manifest
+you may need to remove these for the app to build correctly.
+
+Ignored Files:
+--------------
+The following files were *not* copied into the new Gradle project; you
+should evaluate whether these are still needed in your project and if
+so manually move them:
+
+From ColorPickerPreference:
+* .gitignore
+* CHANGELOG.rst
+* LICENSE
+* README.rst
+* proguard.cfg
+* screen_1.png
+* screen_2.png
+From GreenPudding:
+* .gitattributes
+* .gitignore
+* .pmd
+* proguard.cfg
+* todo.txt
+From GreenPuddingLib:
+* .gitattributes
+* .gitignore
+* proguard.cfg
+
+Moved Files:
+------------
+Android Gradle projects use a different directory structure than ADT
+Eclipse projects. Here's how the projects were restructured:
+
+In ColorPickerPreference:
+* AndroidManifest.xml => colorPickerPreference\src\main\AndroidManifest.xml
+* assets\ => colorPickerPreference\src\main\assets\
+* res\ => colorPickerPreference\src\main\res\
+* src\ => colorPickerPreference\src\main\java\
+In GreenPuddingLib:
+* AndroidManifest.xml => greenPuddingLib\src\main\AndroidManifest.xml
+* assets\ => greenPuddingLib\src\main\assets\
+* res\ => greenPuddingLib\src\main\res\
+* src\ => greenPuddingLib\src\main\java\
+In GreenPudding:
+* AndroidManifest.xml => greenPudding\src\main\AndroidManifest.xml
+* assets\ => greenPudding\src\main\assets\
+* res\ => greenPudding\src\main\res\
+
+Next Steps:
+-----------
+You can now build the project. The Gradle project needs network
+connectivity to download dependencies.
+
+Bugs:
+-----
+If for some reason your project does not build, and you determine that
+it is due to a bug or limitation of the Eclipse to Gradle importer,
+please file a bug at http://b.android.com with category
+Component-Tools.
+
+(This import summary is for your information only, and can be deleted
+after import once you are satisfied with the results.)
