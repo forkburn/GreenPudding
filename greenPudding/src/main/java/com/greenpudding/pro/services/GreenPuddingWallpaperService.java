@@ -5,7 +5,7 @@ import android.service.wallpaper.WallpaperService;
 public class GreenPuddingWallpaperService extends WallpaperService {
 
 	public static final String SHARED_PREFS_NAME = "greenPuddingSettings";
-	private PuddingEngine engine;
+	private PuddingWallpaperEngine engine;
 
 	@Override
 	public void onCreate() {
@@ -22,7 +22,7 @@ public class GreenPuddingWallpaperService extends WallpaperService {
 
 	@Override
 	public Engine onCreateEngine() {
-		engine = new PuddingEngine(this);
+		engine = new PuddingWallpaperEngine(this);
 		return engine;
 	}
 }

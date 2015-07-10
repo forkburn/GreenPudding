@@ -18,6 +18,8 @@
     <color name="color_pudding_default">#ff9FD867</color>
     <!-- From: file:/C:/Users/forkburn/AndroidStudioProjects/GreenPudding/greenPudding/src/main/res/values/strings.xml -->
     <eat-comment/>
+    <string name="app_desc">Physical simulation of an elastic body.</string>
+    <string name="app_name">Green Pudding</string>
     <string name="menu_exit">Exit</string>
     <string name="menu_options">Options</string>
     <string name="pref_background_color_key">backgroundColor</string>

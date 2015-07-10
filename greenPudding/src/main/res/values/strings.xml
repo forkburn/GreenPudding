@@ -28,4 +28,9 @@
     <string name="pref_number_of_nodes_key">numOfNodes</string>
     <string name="pref_pudding_radius_default">180</string>
     <string name="pref_number_of_nodes_default">12</string>
+
+
+    <string name="app_desc">Physical simulation of an elastic body.</string>
+    <string name="app_name">Green Pudding</string>
+
 </resources>

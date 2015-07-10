@@ -9,7 +9,7 @@
 
 
 
-<com.greenpudding.lib.view.PuddingSurfaceView
+<com.greenpudding.free.view.PuddingSurfaceView
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/puddingView" 
 	android:layout_width="fill_parent"

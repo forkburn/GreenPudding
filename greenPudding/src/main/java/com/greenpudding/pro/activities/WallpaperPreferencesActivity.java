@@ -1,6 +1,6 @@
 package com.greenpudding.pro.activities;
 
-import com.greenpudding.lib.activities.PuddingPreferencesActivity;
+import com.greenpudding.free.activities.PuddingPreferencesActivity;
 import com.greenpudding.pro.services.GreenPuddingWallpaperService;
 
 public class WallpaperPreferencesActivity extends PuddingPreferencesActivity {
