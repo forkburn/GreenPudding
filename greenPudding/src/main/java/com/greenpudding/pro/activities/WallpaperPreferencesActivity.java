@@ -12,4 +12,7 @@ public class WallpaperPreferencesActivity extends PuddingPreferencesActivity {
 		getPreferenceManager().setSharedPreferencesName(GreenPuddingWallpaperService.SHARED_PREFS_NAME);
 	}
 
+
+
+
 }
