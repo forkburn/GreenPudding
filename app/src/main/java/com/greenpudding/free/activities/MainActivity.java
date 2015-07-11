@@ -1,6 +1,8 @@
 package com.greenpudding.free.activities;
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.hardware.Sensor;
@@ -12,6 +14,7 @@ import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -22,6 +25,7 @@ import com.greenpudding.free.view.PuddingSurfaceView;
 
 public class MainActivity extends Activity implements SensorEventListener {
 
+    private final String PREF_FRAGMENT_TAG = "PREF_FRAGMENT_TAG";
     // the physical model of the pudding
     private Pudding pudding;
 
@@ -32,7 +36,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     private PuddingSurfaceView puddingView;
 
     // use to scale the hardware provided gravity
-    private float gravityMultiplier = 0.5f;
+    public static float GRAVITY_SCALER = 0.5f;
 
     // a reference to the app preference
     SharedPreferences prefs;
@@ -54,10 +58,10 @@ public class MainActivity extends Activity implements SensorEventListener {
         // check the accelerometer
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        if (accelerometer != null) {
-            isAccelerometerPresent = true;
-        } else {
+        if (accelerometer == null) {
             isAccelerometerPresent = false;
+        } else {
+            isAccelerometerPresent = true;
         }
 
         // get the preferences
@@ -151,7 +155,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     public void onSensorChanged(SensorEvent event) {
         // need to invert the x value since the sensor and the drawing api has
         // different coordinate system
-        pudding.setGravity(-event.values[0] * gravityMultiplier, event.values[1] * gravityMultiplier);
+        pudding.setGravity(-event.values[0] * GRAVITY_SCALER, event.values[1] * GRAVITY_SCALER);
     }
 
     @Override
@@ -178,9 +182,14 @@ public class MainActivity extends Activity implements SensorEventListener {
         // Handle item selection
         int selectedId = item.getItemId();
         if (selectedId == R.id.menu_options) {
+
+            // hide the surface view
+            puddingView.setVisibility(View.INVISIBLE);
+
             // launch the preferences screen
             getFragmentManager().beginTransaction()
-                    .replace(android.R.id.content, new PuddingPreferencesFragment())
+                    .replace(android.R.id.content, new PuddingPreferencesFragment(), PREF_FRAGMENT_TAG)
+                    .addToBackStack(null)
                     .commit();
             return true;
         } else if (selectedId == R.id.menu_exit) {
@@ -188,6 +197,24 @@ public class MainActivity extends Activity implements SensorEventListener {
             return true;
         } else {
             return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        FragmentManager fragManager = getFragmentManager();
+        Fragment prefFragment = fragManager.findFragmentByTag(PREF_FRAGMENT_TAG) ;
+        if (prefFragment==null) {
+          // if not showing pref page, exit app
+            super.onBackPressed();
+
+        }else {
+            // if showing settings, close the settings fragment
+            fragManager.popBackStack();
+            // re-init the pudding according to new settings
+            applyPrefs();
+            puddingView.setVisibility(View.VISIBLE);
+
         }
     }
 }

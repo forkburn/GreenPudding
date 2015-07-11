@@ -1,5 +1,8 @@
-merge 3 project using gradle
+using setting fragment cause bug
+
 add 2 flavors build.
 material ui
 remove option btn reliance.
+
+change icon to a partial sphere
 
