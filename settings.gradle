@@ -1,2 +1,2 @@
-include ':colorPickerPreference'
-include ':greenPudding'
+include ':app', ':ColorPickerPreference'
+project(':ColorPickerPreference').projectDir = new File('app/libs/ColorPickerPreference')
