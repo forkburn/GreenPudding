@@ -1,4 +1,4 @@
-package com.greenpudding.free.activities;
+package com.greenpudding.activities;
 
 import android.os.Bundle;
 import android.preference.EditTextPreference;

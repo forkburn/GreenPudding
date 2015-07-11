@@ -1,4 +1,4 @@
-package com.greenpudding.free.model;
+package com.greenpudding.model;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;

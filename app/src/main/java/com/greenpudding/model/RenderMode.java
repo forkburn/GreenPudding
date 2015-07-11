@@ -1,4 +1,4 @@
-package com.greenpudding.free.model;
+package com.greenpudding.model;
 
 public enum RenderMode {
 	NORMAL, WIREFRAME;

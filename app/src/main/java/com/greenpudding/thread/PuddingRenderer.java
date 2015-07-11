@@ -1,9 +1,9 @@
-package com.greenpudding.free.thread;
+package com.greenpudding.thread;
 
 import android.graphics.Canvas;
 import android.view.SurfaceHolder;
 
-import com.greenpudding.free.model.Pudding;
+import com.greenpudding.model.Pudding;
 
 /**
  * A thread that repeatedly gets the canvas and ask the pudding to render on the

@@ -11,9 +11,9 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
 import com.greenpudding.R;
-import com.greenpudding.free.model.Pudding;
-import com.greenpudding.free.model.RenderMode;
-import com.greenpudding.free.thread.PuddingRenderer;
+import com.greenpudding.model.Pudding;
+import com.greenpudding.model.RenderMode;
+import com.greenpudding.thread.PuddingRenderer;
 
 public class GreenPuddingWallpaperService extends WallpaperService {
 

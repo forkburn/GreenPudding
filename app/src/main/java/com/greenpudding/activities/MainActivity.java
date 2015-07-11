@@ -1,4 +1,4 @@
-package com.greenpudding.free.activities;
+package com.greenpudding.activities;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -19,9 +19,9 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.greenpudding.R;
-import com.greenpudding.free.model.Pudding;
-import com.greenpudding.free.model.RenderMode;
-import com.greenpudding.free.view.PuddingSurfaceView;
+import com.greenpudding.model.Pudding;
+import com.greenpudding.model.RenderMode;
+import com.greenpudding.view.PuddingSurfaceView;
 
 public class MainActivity extends Activity implements SensorEventListener {
 

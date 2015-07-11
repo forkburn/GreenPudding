@@ -1,4 +1,4 @@
-package com.greenpudding.free.view;
+package com.greenpudding.view;
 
 import android.content.Context;
 import android.graphics.Rect;
@@ -7,8 +7,8 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.greenpudding.free.model.Pudding;
-import com.greenpudding.free.thread.PuddingRenderer;
+import com.greenpudding.model.Pudding;
+import com.greenpudding.thread.PuddingRenderer;
 
 /**
  * A surface view that starts a separate thread to do the rendering when surface

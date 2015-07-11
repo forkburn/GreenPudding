@@ -1,4 +1,4 @@
-package com.greenpudding.free.model;
+package com.greenpudding.model;
 
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;

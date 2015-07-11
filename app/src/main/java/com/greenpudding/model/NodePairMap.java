@@ -1,4 +1,4 @@
-package com.greenpudding.free.model;
+package com.greenpudding.model;
 
 /**
  * This class stores the pair-wise relation between each pair of nodes. A 2D
