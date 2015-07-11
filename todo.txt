@@ -1,8 +1,7 @@
-using setting fragment cause bug
+fix live wallpaper and its pref page
 
-add 2 flavors build.
-material ui
-remove option btn reliance.
+add 2 flavors build for demo and paid
+material ui . remove option btn reliance.
 
-change icon to a partial sphere
+change icon to a non regular ballK
 
