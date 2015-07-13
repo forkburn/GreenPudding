@@ -31,6 +31,12 @@
 
 
     <string name="app_desc">Physical simulation of an elastic body.</string>
-    <string name="app_name">Green Pudding</string>
+    <string name="app_name_free">Green Pudding</string>
+    <string name="app_name_pro">Green Pudding Pro</string>
+
+
+    <string name="wallpaper_setting">Green Pudding Wallpaper Settings</string>
+    <string name="wallpaper_name">Green Pudding</string>
+    <string name="wallpaper_desc">Physical simulation of an elastic body.</string>
 
 </resources>
