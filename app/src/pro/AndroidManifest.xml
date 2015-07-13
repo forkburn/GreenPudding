@@ -17,7 +17,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name="pro.services.GreenPuddingWallpaperService"
+            android:name=".pro.services.GreenPuddingWallpaperService"
             android:label="@string/wallpaper_name"
             android:permission="android.permission.BIND_WALLPAPER">
             <intent-filter>

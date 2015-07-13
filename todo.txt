@@ -5,3 +5,4 @@ material ui . remove option btn reliance.
 
 change icon to a non regular ball
 
+dragging: shoud  drage multiple points. force determined by distance to finger
