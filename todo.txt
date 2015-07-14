@@ -1,4 +1,5 @@
-fix live wallpaper and its pref page
+merge xml manifest
+
 
 add 2 flavors build for demo and paid
 material ui . remove option btn reliance.

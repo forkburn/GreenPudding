@@ -5,13 +5,14 @@ import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
+import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.text.method.DigitsKeyListener;
 
 import com.greenpudding.R;
 
 
-public class PuddingPreferencesFragment extends PreferenceFragment implements OnPreferenceClickListener,
+public class PuddingPreferencesActivity extends PreferenceActivity implements OnPreferenceClickListener,
         OnPreferenceChangeListener {
 
     private static final int MAX_PUDDING_RADIUS = 1000;

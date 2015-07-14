@@ -3,6 +3,7 @@ package com.greenpudding.activities;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.hardware.Sensor;
@@ -179,18 +180,10 @@ public class MainActivity extends Activity implements SensorEventListener {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
         int selectedId = item.getItemId();
         if (selectedId == R.id.menu_options) {
-
-            // hide the surface view
-            puddingView.setVisibility(View.INVISIBLE);
-
             // launch the preferences screen
-            getFragmentManager().beginTransaction()
-                    .replace(android.R.id.content, new PuddingPreferencesFragment(), PREF_FRAGMENT_TAG)
-                    .addToBackStack(null)
-                    .commit();
+            startActivity(new Intent(this, PuddingPreferencesActivity.class));
             return true;
         } else if (selectedId == R.id.menu_exit) {
             finish();
@@ -200,21 +193,4 @@ public class MainActivity extends Activity implements SensorEventListener {
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        FragmentManager fragManager = getFragmentManager();
-        Fragment prefFragment = fragManager.findFragmentByTag(PREF_FRAGMENT_TAG) ;
-        if (prefFragment==null) {
-          // if not showing pref page, exit app
-            super.onBackPressed();
-
-        }else {
-            // if showing settings, close the settings fragment
-            fragManager.popBackStack();
-            // re-init the pudding according to new settings
-            applyPrefs();
-            puddingView.setVisibility(View.VISIBLE);
-
-        }
-    }
 }
