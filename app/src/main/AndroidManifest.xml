@@ -2,6 +2,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.greenpudding">
 
-    <application android:icon="@drawable/ic_launcher_greenpudding" />
+    <application android:icon="@drawable/ic_launcher_greenpudding">
+        <activity
+            android:name=".activities.MainActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".activities.PuddingPreferencesActivity"></activity>
+    </application>
+
 
 </manifest>
