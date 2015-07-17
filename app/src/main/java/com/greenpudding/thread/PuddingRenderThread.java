@@ -10,7 +10,7 @@ import com.greenpudding.model.Pudding;
  * canvas.
  * 
  */
-public class PuddingRenderer implements Runnable {
+public class PuddingRenderThread implements Runnable {
 
 	private SurfaceHolder surfaceHolder;
 	private Pudding pudding;
@@ -18,7 +18,7 @@ public class PuddingRenderer implements Runnable {
 	// flag indicating whether thread should continue to run
 	private boolean stopFlag = false;
 
-	public PuddingRenderer(SurfaceHolder holder) {
+	public PuddingRenderThread(SurfaceHolder holder) {
 		surfaceHolder = holder;
 	}
 
@@ -31,7 +31,7 @@ public class PuddingRenderer implements Runnable {
 				if (canvas != null) {
 					synchronized (surfaceHolder) {
 						pudding.calcFrame();
-						pudding.renderFrame(canvas);
+						pudding.render(canvas);
 					}
 				}
 			} finally {

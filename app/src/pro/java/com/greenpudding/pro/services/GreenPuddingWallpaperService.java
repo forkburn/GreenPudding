@@ -13,7 +13,7 @@ import android.view.SurfaceHolder;
 import com.greenpudding.R;
 import com.greenpudding.model.Pudding;
 import com.greenpudding.model.RenderMode;
-import com.greenpudding.thread.PuddingRenderer;
+import com.greenpudding.thread.PuddingRenderThread;
 
 public class GreenPuddingWallpaperService extends WallpaperService {
 
@@ -57,7 +57,7 @@ public class GreenPuddingWallpaperService extends WallpaperService {
         // use to scale the hardware provided gravity
         private float gravityMultiplier = 0.5f;
 
-        private PuddingRenderer puddingRenderer;
+        private PuddingRenderThread puddingRenderThread;
         private Thread puddingRendererThread;
 
         private SharedPreferences prefs;
@@ -151,15 +151,15 @@ public class GreenPuddingWallpaperService extends WallpaperService {
         }
 
         public void startRendererThread() {
-            puddingRenderer = new PuddingRenderer(surfaceHolder);
-            puddingRenderer.setPudding(pudding);
-            puddingRendererThread = new Thread(puddingRenderer);
+            puddingRenderThread = new PuddingRenderThread(surfaceHolder);
+            puddingRenderThread.setPudding(pudding);
+            puddingRendererThread = new Thread(puddingRenderThread);
             puddingRendererThread.start();
         }
 
         public void stopRendererThread() {
             boolean retry = true;
-            puddingRenderer.setStopFlag(true);
+            puddingRenderThread.setStopFlag(true);
             while (retry) {
                 try {
                     puddingRendererThread.join();

@@ -8,7 +8,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.greenpudding.model.Pudding;
-import com.greenpudding.thread.PuddingRenderer;
+import com.greenpudding.thread.PuddingRenderThread;
 
 /**
  * A surface view that starts a separate thread to do the rendering when surface
@@ -18,7 +18,7 @@ public class PuddingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
     private Pudding pudding;
 
     private SurfaceHolder surfaceHolder;
-    private PuddingRenderer puddingRenderer;
+    private PuddingRenderThread puddingRenderThread;
     private Thread puddingRendererThread;
 
     public PuddingSurfaceView(Context context) {
@@ -63,15 +63,15 @@ public class PuddingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
     }
 
     private void startRendererThread() {
-        puddingRenderer = new PuddingRenderer(surfaceHolder);
-        puddingRenderer.setPudding(pudding);
-        puddingRendererThread = new Thread(puddingRenderer);
+        puddingRenderThread = new PuddingRenderThread(surfaceHolder);
+        puddingRenderThread.setPudding(pudding);
+        puddingRendererThread = new Thread(puddingRenderThread);
         puddingRendererThread.start();
     }
 
     private void stopRendererThread() {
         boolean retry = true;
-        puddingRenderer.setStopFlag(true);
+        puddingRenderThread.setStopFlag(true);
         while (retry) {
             try {
                 puddingRendererThread.join();
