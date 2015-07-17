@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:picker="http://schemas.android.com/apk/res/com.quietlycoding.android.picker">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<PreferenceCategory android:title="@string/pref_cat_physical_parameters_title"
 
@@ -9,16 +8,21 @@
 
 		<CheckBoxPreference android:key="@string/pref_is_gravity_enabled_key"
 			android:title="@string/pref_is_gravity_enabled_title"
-			android:summary="@string/pref_is_gravity_enabled_summary" 
 			android:defaultValue="true"/>
 
 		<CheckBoxPreference android:key="@string/pref_is_pinned_key"
-			android:title="@string/pref_is_pinned_title" android:summary="@string/pref_is_pinned_summary" 
+			android:title="@string/pref_is_pinned_title"
 			android:defaultValue="false"/>
 
 		<EditTextPreference android:title="@string/pref_pudding_radius_title"
 			android:dialogTitle="@string/pref_pudding_radius_title"
-			android:summary="@string/pref_pudding_radius_summary" android:key="@string/pref_pudding_radius_key"
+			android:key="@string/pref_pudding_radius_key"
+			android:defaultValue="@string/pref_pudding_radius_default">
+		</EditTextPreference>
+
+		<EditTextPreference android:title="@string/pref_pudding_elasticity_title"
+			android:dialogTitle="@string/pref_pudding_elasticity_title"
+			android:key="@string/pref_pudding_elasticity_key"
 			android:defaultValue="@string/pref_pudding_radius_default">
 		</EditTextPreference>
 
