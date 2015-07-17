@@ -1,9 +1,4 @@
-merge xml manifest
 
+change icon to a non regular blob
 
-add 2 flavors build for demo and paid
-material ui . remove option btn reliance.
-
-change icon to a non regular ball
-
-dragging: shoud  drage multiple points. force determined by distance to finger
+dragging: should  drag multiple points. force determined by distance to finger
