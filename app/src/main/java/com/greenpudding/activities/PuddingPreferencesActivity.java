@@ -6,7 +6,6 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceFragment;
 import android.text.method.DigitsKeyListener;
 
 import com.greenpudding.R;
@@ -27,12 +26,12 @@ public class PuddingPreferencesActivity extends PreferenceActivity implements On
 
         //  populate the pref screen with xml content
         addPreferencesFromResource(R.xml.preferences);
-        initNumericEditTextPreference(R.string.pref_pudding_radius_key);
-        initNumericEditTextPreference(R.string.pref_number_of_nodes_key);
+//        initNumericEditTextPreference(R.string.pref_pudding_radius_key);
+//        initNumericEditTextPreference(R.string.pref_number_of_nodes_key);
     }
 
     protected void initSharedPreference() {
-        // do nothing
+        // to be overidden
     }
 
     private void initNumericEditTextPreference(int resId) {

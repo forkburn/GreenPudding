@@ -1,1 +1,1 @@
-include ':app', ':ColorPickerPreference', ':numberpickerpreference'
+include ':app', ':ColorPickerPreference', 'NumberPickerPreference'

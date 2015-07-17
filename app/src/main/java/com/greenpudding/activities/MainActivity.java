@@ -18,26 +18,22 @@ import android.view.WindowManager;
 
 import com.greenpudding.R;
 import com.greenpudding.model.Pudding;
-import com.greenpudding.model.RenderMode;
+import com.greenpudding.util.PuddingConfigurator;
 import com.greenpudding.view.PuddingSurfaceView;
 
 public class MainActivity extends Activity implements SensorEventListener {
 
+    // use to scale the hardware provided gravity
+    public static float GRAVITY_SCALER = 0.5f;
     private final String PREF_FRAGMENT_TAG = "PREF_FRAGMENT_TAG";
+    // a reference to the app preference
+    SharedPreferences prefs;
     // the physical model of the pudding
     private Pudding pudding;
-
     private SensorManager sensorManager;
     private Sensor accelerometer;
     private boolean isAccelerometerPresent;
-
     private PuddingSurfaceView puddingView;
-
-    // use to scale the hardware provided gravity
-    public static float GRAVITY_SCALER = 0.5f;
-
-    // a reference to the app preference
-    SharedPreferences prefs;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -102,51 +98,7 @@ public class MainActivity extends Activity implements SensorEventListener {
     }
 
     private void applyPrefs() {
-
-        // apply the pudding size setting
-        String radiusKey = getString(R.string.pref_pudding_radius_key);
-        int radius = Integer.parseInt(prefs.getString(radiusKey, "100"));
-        pudding.setRadius(radius, false);
-
-        // apply the number of nodes setting
-        String numOfNodesKey = getString(R.string.pref_number_of_nodes_key);
-        int numOfNodes = Integer.parseInt(prefs.getString(numOfNodesKey, "12"));
-        pudding.setNumOfNodes(numOfNodes);
-
-        // apply the gravity setting
-        String isGravityEnabledKey = getString(R.string.pref_is_gravity_enabled_key);
-        boolean isGravityEnabled = prefs.getBoolean(isGravityEnabledKey, true);
-        pudding.setIsGravityEnabled(isGravityEnabled);
-
-        // apply the central pinning setting
-        String isPinnedKey = getString(R.string.pref_is_pinned_key);
-        boolean isPinned = prefs.getBoolean(isPinnedKey, false);
-        pudding.setIsPinned(isPinned);
-
-        // apply the render mode setting
-        String renderModeKey = getString(R.string.pref_render_mode_key);
-        String renderMode = prefs.getString(renderModeKey, "");
-        String[] validRenderModes = getResources().getStringArray(R.array.pref_render_mode_value);
-        if (renderMode.equals(validRenderModes[0])) {
-            pudding.setRenderMode(RenderMode.NORMAL);
-        } else if (renderMode.equals(validRenderModes[1])) {
-            pudding.setRenderMode(RenderMode.WIREFRAME);
-        }
-
-        // apply the pudding color settings
-        String puddingColorKey = getString(R.string.pref_pudding_color_key);
-        int defaultPuddingColor = getResources().getColor(R.color.color_pudding_default);
-        int puddingColor = prefs.getInt(puddingColorKey, defaultPuddingColor);
-        pudding.setColor(puddingColor);
-
-        // apply the pudding background color settings
-        String backgroundColorKey = getString(R.string.pref_background_color_key);
-        int defaultBackgroundColor = getResources().getColor(R.color.color_background_default);
-        int backgroundColor = prefs.getInt(backgroundColorKey, defaultBackgroundColor);
-        pudding.setBackgroundColor(backgroundColor);
-
-        // refresh the position of all nodes
-        pudding.refreshNodes();
+        PuddingConfigurator.applyPrefs(pudding, prefs, this);
     }
 
     @Override

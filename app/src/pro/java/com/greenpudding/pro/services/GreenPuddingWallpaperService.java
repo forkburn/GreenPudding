@@ -10,10 +10,9 @@ import android.service.wallpaper.WallpaperService;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
-import com.greenpudding.R;
 import com.greenpudding.model.Pudding;
-import com.greenpudding.model.RenderMode;
 import com.greenpudding.thread.PuddingRenderThread;
+import com.greenpudding.util.PuddingConfigurator;
 
 public class GreenPuddingWallpaperService extends WallpaperService {
 
@@ -225,51 +224,7 @@ public class GreenPuddingWallpaperService extends WallpaperService {
         }
 
         private void applyPrefs() {
-
-            // apply the pudding size setting
-            String radiusKey = wallpaperService.getString(R.string.pref_pudding_radius_key);
-            int radius = Integer.parseInt(prefs.getString(radiusKey, "100"));
-            pudding.setRadius(radius, false);
-
-            // apply the number of nodes setting
-            String numOfNodesKey = wallpaperService.getString(R.string.pref_number_of_nodes_key);
-            int numOfNodes = Integer.parseInt(prefs.getString(numOfNodesKey, "12"));
-            pudding.setNumOfNodes(numOfNodes);
-
-            // apply the gravity setting
-            String isGravityEnabledKey = wallpaperService.getString(R.string.pref_is_gravity_enabled_key);
-            boolean isGravityEnabled = prefs.getBoolean(isGravityEnabledKey, true);
-            pudding.setIsGravityEnabled(isGravityEnabled);
-
-            // apply the central pinning setting
-            String isPinnedKey = wallpaperService.getString(R.string.pref_is_pinned_key);
-            boolean isPinned = prefs.getBoolean(isPinnedKey, false);
-            pudding.setIsPinned(isPinned);
-
-            // apply the render mode setting
-            String renderModeKey = wallpaperService.getString(R.string.pref_render_mode_key);
-            String renderMode = prefs.getString(renderModeKey, "");
-            String[] validRenderModes = wallpaperService.getResources().getStringArray(R.array.pref_render_mode_value);
-            if (renderMode.equals(validRenderModes[0])) {
-                pudding.setRenderMode(RenderMode.NORMAL);
-            } else if (renderMode.equals(validRenderModes[1])) {
-                pudding.setRenderMode(RenderMode.WIREFRAME);
-            }
-
-            // apply the pudding color settings
-            String puddingColorKey = wallpaperService.getString(R.string.pref_pudding_color_key);
-            int defaultPuddingColor = wallpaperService.getResources().getColor(R.color.color_pudding_default);
-            int puddingColor = prefs.getInt(puddingColorKey, defaultPuddingColor);
-            pudding.setColor(puddingColor);
-
-            // apply the pudding background color settings
-            String backgroundColorKey = wallpaperService.getString(R.string.pref_background_color_key);
-            int defaultBackgroundColor = wallpaperService.getResources().getColor(R.color.color_background_default);
-            int backgroundColor = prefs.getInt(backgroundColorKey, defaultBackgroundColor);
-            pudding.setBackgroundColor(backgroundColor);
-
-            // refresh the position of all nodes
-            pudding.refreshNodes();
+            PuddingConfigurator.applyPrefs(pudding, prefs, GreenPuddingWallpaperService.this);
         }
     }
 }

@@ -314,13 +314,9 @@ public class Pudding {
      * Set the size of the pudding.
      *
      * @param radius
-     * @param refreshNodes : whether to refresh the position of all nodes
      */
-    public void setRadius(int radius, boolean refreshNodes) {
+    public void setRadius(int radius) {
         this.radius = radius;
-        if (refreshNodes) {
-            refreshNodes();
-        }
     }
 
     public int getRadius() {
@@ -455,5 +451,7 @@ public class Pudding {
     public void setBackgroundColor(int backgroundColor) {
         renderer.setBackgroundColor(backgroundColor);
     }
+
+
 
 }

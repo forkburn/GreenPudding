@@ -19,20 +19,16 @@ public class NumberPickerPreference extends DialogPreference {
         super(context, attrs);
         setDialogLayoutResource(R.layout.number_picker_pref);
         readCustomAttrs(attrs);
-
     }
 
     private void readCustomAttrs(AttributeSet attrs) {
-        TypedArray a = getContext().getTheme().obtainStyledAttributes(
-                attrs,
-                R.styleable.NumberPickerPref,
-                0, 0);
-
+        TypedArray array = getContext().getTheme().obtainStyledAttributes(
+                attrs, R.styleable.NumberPickerPref, 0, 0);
         try {
-            pickerMinVal = a.getInteger(R.styleable.NumberPickerPref_minValue, 0);
-            pickerMaxVal = a.getInteger(R.styleable.NumberPickerPref_maxValue, 0);
+            pickerMinVal = array.getInteger(R.styleable.NumberPickerPref_minValue, 0);
+            pickerMaxVal = array.getInteger(R.styleable.NumberPickerPref_maxValue, 1000);
         } finally {
-            a.recycle();
+            array.recycle();
         }
     }
 
@@ -49,6 +45,8 @@ public class NumberPickerPreference extends DialogPreference {
     public void onClick(DialogInterface dialog, int which) {
         super.onClick(dialog, which);
         if (which == DialogInterface.BUTTON_POSITIVE) {
+            // make the picker save user input value
+            picker.clearFocus();
             this.initialValue = picker.getValue();
             persistInt(initialValue);
             callChangeListener(initialValue);
