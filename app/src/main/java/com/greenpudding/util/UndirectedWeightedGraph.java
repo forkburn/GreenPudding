@@ -21,12 +21,17 @@ public class UndirectedWeightedGraph {
     }
 
     public double getEdgeWeight(int id1, int id2) {
-        if (id1 > id2) {
-            return edgeWeight.get(new Pair(id1, id2));
-        } else {
-            return edgeWeight.get(new Pair(id2, id1));
+        try {
+            if (id1 > id2) {
+                return edgeWeight.get(new Pair(id1, id2));
+            } else {
+                return edgeWeight.get(new Pair(id2, id1));
 
+            }
+        }catch(Exception e) {
+            return 0;
         }
+
     }
 
 }

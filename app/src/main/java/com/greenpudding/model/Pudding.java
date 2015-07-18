@@ -3,8 +3,10 @@ package com.greenpudding.model;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 
+import com.greenpudding.model.dragging.DraggingManager;
 import com.greenpudding.util.UndirectedWeightedGraph;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -23,14 +25,12 @@ public class Pudding {
     public static final int DEFAULT_RADIUS = 100;
     public static final int DEFAULT_NUM_NODES = 12;
 
-    // if distance between 2 nodes is smaller than this, no force will result
-    // between the nodes. This prevents float point error when we have a very
-    // small denominator
+    // minimal distance between nodes for the elasticity to work. prevents bug due to floating error
     public static final double NODE_DISTANCE_THRESHOLD = 0.01f;
     // mass of each node. used for calculating acceleration
     public static final double NODE_MASS = 1;
     // strength of the force dragging the node by mouse
-    public static final double DRAGGING_FORCE_SCALE = 0.5;
+    public static final double DRAGGING_FORCE_SCALE = 0.1;
     // the nodes representing the mass points.
     private List<PuddingNode> nodes = new LinkedList<>();
     // a 2D array storing the distance between each pair of nodes
@@ -56,13 +56,8 @@ public class Pudding {
     private PuddingRenderer renderer;
     // the upper/lower limit of the position to where a node can move to
     private Rect boundingRect;
-    // A mapping from pointer ID to their position
-    private Map<Integer, Point2d> pointerIdToPosMap = new HashMap<Integer, Point2d>();
-    // A mapping from nodeId to pointerId that's dragging the
-    // node. If a nodeId maps to null, it means no
-    // pointer is dragging the node
-    private Map<Integer, Integer> nodeIdToPointerIdMap = new LinkedHashMap<Integer, Integer>();
 
+    private DraggingManager draggingManager;
 
     public Pudding() {
         renderer = new PuddingRenderer();
@@ -71,15 +66,15 @@ public class Pudding {
         boundingRect = new Rect();
         setColor(DEFAULT_FILL_COLOR);
         setNumOfNodes(DEFAULT_NUM_NODES);
+        draggingManager = new DraggingManager();
     }
 
     public final void setNumOfNodes(int numOfNodes) {
         renderer.setNumNodes(numOfNodes);
-        // generate the nodes
+        // regenerate the nodes
+        nodes = new ArrayList<>();
         for (int i = 0; i < numOfNodes; i++) {
             nodes.add(new PuddingNode());
-            // initially, no node is dragged by mouse
-            nodeIdToPointerIdMap.put(i, null);
         }
     }
 
@@ -98,6 +93,21 @@ public class Pudding {
         updateDistanceMap();
     }
 
+    /**
+     * Put the nodes on a circle around the given point
+     */
+    private void positionNodesAround(int xPos, int yPos) {
+        for (int i = 0; i < nodes.size(); i++) {
+            PuddingNode node = nodes.get(i);
+            // position the nodes along a circle
+            node.pos.x = xPos + getRadius() * Math.cos(i * 2 * Math.PI / nodes.size());
+            node.pos.y = yPos + getRadius() * Math.sin(i * 2 * Math.PI / nodes.size());
+
+            // remember the current position as their pinned position
+            node.pinnedPos.set(node.pos);
+        }
+    }
+
     private void updateDistanceMap() {
         // calculate the distance between pairs of nodes, store them in
         // distanceMap
@@ -106,23 +116,6 @@ public class Pudding {
                 double distance = nodes.get(i).pos.distance(nodes.get(j).pos);
                 distanceMap.setEdgeWeight(i, j, distance);
             }
-        }
-    }
-
-    /**
-     * Put the nodes on a circle around the given point
-     */
-    private void positionNodesAround(int xPos, int yPos) {
-        for (int i = 0; i < nodes.size(); i++) {
-            nodes.get(i).pos.x = xPos;
-            nodes.get(i).pos.y = yPos;
-
-            // position the nodes along a circle
-            nodes.get(i).pos.x += getRadius() * Math.cos(i * 2 * Math.PI / nodes.size());
-            nodes.get(i).pos.y += getRadius() * Math.sin(i * 2 * Math.PI / nodes.size());
-
-            // remember the current position as their pinned position
-            nodes.get(i).pinnedPos.set(nodes.get(i).pos);
         }
     }
 
@@ -148,14 +141,17 @@ public class Pudding {
      * accordingly using Hooke's law. Should be called on each frame.
      */
     private void updateAcceleration() {
-        // for each node, calculate the acceleration due to gravity and pinning and dragging
         for (int i = 0; i < nodes.size(); i++) {
+            // reset acceleration from the calculation in last frame
             resetAccelerationForNode(i);
+            // for each node, calculate the acceleration due to gravity and pinning
             updateAccelerationForNode(i);
         }
 
-        // for each pair of nodes, calculate the acceleration due to the force
-        // between nodes
+        // update acceleration due to mouse dragging force
+        draggingManager.drag(nodes);
+
+        // for each pair of nodes, calculate the acceleration due to the force between them
         for (int i = 0; i < nodes.size() - 1; i++) {
             for (int j = i + 1; j < nodes.size(); j++) {
                 updateBindingForceAccelerationForNodes(i, j);
@@ -177,8 +173,6 @@ public class Pudding {
         if (isPinned) {
             updatePinningForceAccelerationForNode(nodeId);
         }
-
-        updateDraggingForceAccelerationForNode(nodeId);
     }
 
     private void updatePinningForceAccelerationForNode(int nodeId) {
@@ -200,28 +194,6 @@ public class Pudding {
         }
     }
 
-    private void updateDraggingForceAccelerationForNode(int nodeId) {
-        // if the node's being dragged, add the acceleration due to force
-        // from being dragged by mouse
-        Integer pointerId = nodeIdToPointerIdMap.get(nodeId);
-        if (pointerId != null) {
-            Point2d pointerPos = pointerIdToPosMap.get(pointerId);
-            if (pointerPos != null) {
-                Vector2d acceleration = getDraggingAcceleration(nodes.get(nodeId).pos, pointerPos);
-                nodes.get(nodeId).accel.add(acceleration);
-            }
-        }
-    }
-
-    private Vector2d getDraggingAcceleration(Point2d draggedPos, Point2d draggingPos) {
-        // calc the displacement between the pointer and the node
-        Vector2d displacement = new Vector2d(0, 0);
-        displacement.sub(draggingPos, draggedPos);
-        Vector2d acceleration = new Vector2d(displacement);
-        // accel = force/mass = scale*displacement/mass
-        acceleration.scale(DRAGGING_FORCE_SCALE / NODE_MASS);
-        return acceleration;
-    }
 
     private void updateBindingForceAccelerationForNodes(int nodeId1, int nodeId2) {
         // the current distance between the 2 nodes is
@@ -382,11 +354,7 @@ public class Pudding {
      * @param pointerId
      */
     public void setMousePos(double x, double y, int pointerId) {
-        if (pointerIdToPosMap.containsKey(pointerId)) {
-            pointerIdToPosMap.get(pointerId).set(x, y);
-        } else {
-            pointerIdToPosMap.put(pointerId, new Point2d(x, y));
-        }
+        draggingManager.setPointerCurrentPos(pointerId, x, y);
     }
 
     /**
@@ -396,33 +364,11 @@ public class Pudding {
      * @param y Mouse position where the dragging starts
      */
     public void startDragging(double x, double y, int pointerId) {
-        setMousePos(x, y, pointerId);
-
-        // find the node closest to the mousePos
-        double minDistanceToMouse = Float.MAX_VALUE;
-        double distanceToMouse;
-        int nearestNodeId = 0;
-
-        for (int i = 0; i < nodes.size(); i++) {
-            distanceToMouse = nodes.get(i).pos.distance(pointerIdToPosMap.get(pointerId));
-            if (distanceToMouse < minDistanceToMouse) {
-                minDistanceToMouse = distanceToMouse;
-                nearestNodeId = i;
-            }
-        }
-
-        // set that node 's dragging pointer
-        nodeIdToPointerIdMap.put(nearestNodeId, pointerId);
+        draggingManager.startDragging(pointerId, x, y, nodes);
     }
 
     public void stopDragging(int pointerId) {
-        // find the node currently being dragged by that pointer
-        for (Map.Entry<Integer, Integer> entry : nodeIdToPointerIdMap.entrySet()) {
-            Integer nodePointerId = entry.getValue();
-            if (nodePointerId != null && nodePointerId == pointerId) {
-                entry.setValue(null);
-            }
-        }
+        draggingManager.stopDragging(pointerId);
     }
 
     public Boolean getIsGravityEnabled() {

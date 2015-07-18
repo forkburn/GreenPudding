@@ -16,7 +16,7 @@ public class Pointer {
     // postion of the pointer when dragging started
     private Point2d pointerStartPos;
 
-    private Point2d pointerCurrentPos;
+    private Point2d pointerCurrentPos = new Point2d();
 
     // ids of the nodes being dragged by this pointer
     private List<Integer> draggedNodeIds = new ArrayList<>();
@@ -37,14 +37,17 @@ public class Pointer {
     }
 
     /**
-     * update the acceleration of the nodes, according to the dragging force from poiinter
+     * update the acceleration of the nodes, according to the dragging force from pointer
+     *
      * @param nodes
      */
     public void drag(List<PuddingNode> nodes) {
+        // pointer displacement represents how the pointer moved since touch event
         Vector2d pointerDisplacement = new Vector2d();
         pointerDisplacement.sub(pointerCurrentPos, pointerStartPos);
+
         // for each node being dragged by this pointer
-        for (int nodeId:draggedNodeIds) {
+        for (int nodeId : draggedNodeIds) {
             // nodeTargetPos is the node's original position + mouse drag displacement vector
             Point2d nodeTargetPos = new Point2d();
             nodeTargetPos.add(nodesStartPos.get(nodeId), pointerDisplacement);
@@ -56,14 +59,13 @@ public class Pointer {
     }
 
     /**
-     *
      * @param draggedPos
      * @param draggingPos
      * @return the acceleration due to dragging force from one point to another
      */
     private Vector2d getDraggingAcceleration(Point2d draggedPos, Point2d draggingPos) {
         // calc the displacement between the points
-        Vector2d displacement = new Vector2d(0, 0);
+        Vector2d displacement = new Vector2d();
         displacement.sub(draggingPos, draggedPos);
         Vector2d acceleration = new Vector2d(displacement);
         // accel = force/mass = scale*displacement/mass
