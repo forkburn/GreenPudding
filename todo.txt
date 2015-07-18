@@ -1,4 +1,3 @@
-
 change icon to a non regular blob
 
 dragging: current solution

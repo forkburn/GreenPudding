@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:custom="http://schemas.android.com/apk/lib/com.warfactory.numberpickerpreference">
+    xmlns:custom="http://schemas.android.com/apk/res-auto/com.warfactory.numberpickerpreference">
 
     <PreferenceCategory
         android:summary="@string/pref_cat_physical_parameters_summary"
@@ -52,13 +52,6 @@
         android:summary="@string/pref_cat_appearance_summary"
         android:title="@string/pref_cat_appearance_title">
 
-        <ListPreference
-            android:entries="@array/pref_render_mode_text"
-            android:entryValues="@array/pref_render_mode_value"
-            android:key="@string/pref_render_mode_key"
-            android:persistent="true"
-            android:title="@string/pref_render_mode_title" />
-
         <net.margaritov.preference.colorpicker.ColorPickerPreference
             android:defaultValue="@color/color_pudding_default"
             android:key="@string/pref_pudding_color_key"
@@ -70,6 +63,13 @@
             android:key="@string/pref_background_color_key"
             android:summary="@string/pref_background_color_summary"
             android:title="@string/pref_background_color_title" />
+
+        <ListPreference
+            android:entries="@array/pref_render_mode_text"
+            android:entryValues="@array/pref_render_mode_value"
+            android:key="@string/pref_render_mode_key"
+            android:persistent="true"
+            android:title="@string/pref_render_mode_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>
