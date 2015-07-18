@@ -58,8 +58,7 @@ public class PuddingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        Rect boundingRect = new Rect(0, 0, width, height);
-        pudding.setBoundingRect(boundingRect);
+        pudding.setBoundingRect(new Rect(0, 0, width, height));
     }
 
     private void startRendererThread() {
