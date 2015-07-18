@@ -3,6 +3,8 @@ package com.greenpudding.model;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 
+import com.greenpudding.util.UndirectedWeightedGraph;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -34,9 +36,9 @@ public class Pudding {
     // the nodes representing the mass points
     private PuddingNode[] nodes;
     // a 2D array storing the distance between each pair of nodes
-    private NodePairMap distanceMap;
+    private UndirectedWeightedGraph distanceMap;
     // a 2D array storing the stress on the binding of each pair of nodes
-    private NodePairMap stressMap;
+    private UndirectedWeightedGraph stressMap;
     // Physical properties
     // radius, in pixels
     private int radius = DEFAULT_RADIUS;
@@ -57,18 +59,18 @@ public class Pudding {
     // the upper/lower limit of the position to where a node can move to
     private Rect boundingRect;
     // A mapping from pointer ID to their position
-    private Map<Integer, Point2d> pointerPosMap = new HashMap<Integer, Point2d>();
+    private Map<Integer, Point2d> pointerIdToPosMap = new HashMap<Integer, Point2d>();
     // A mapping from nodeId to pointerId that's dragging the
     // node. If a nodeId maps to null, it means no
     // pointer is dragging the node
-    private Map<Integer, Integer> nodePointerMap = new LinkedHashMap<Integer, Integer>();
+    private Map<Integer, Integer> nodeIdToPointerIdMap = new LinkedHashMap<Integer, Integer>();
 
 
     public Pudding() {
         renderer = new PuddingRenderer();
         nodes = new PuddingNode[MAX_NODE_NUM];
-        distanceMap = new NodePairMap(MAX_NODE_NUM);
-        stressMap = new NodePairMap(MAX_NODE_NUM);
+        distanceMap = new UndirectedWeightedGraph(MAX_NODE_NUM);
+        stressMap = new UndirectedWeightedGraph(MAX_NODE_NUM);
         boundingRect = new Rect();
         setColor(DEFAULT_FILL_COLOR);
         setNumOfNodes(DEFAULT_NUM_NODES);
@@ -82,7 +84,7 @@ public class Pudding {
             for (int i = 0; i < numOfNodes; i++) {
                 nodes[i] = new PuddingNode();
                 // initially, no node is dragged by mouse
-                nodePointerMap.put(i, null);
+                nodeIdToPointerIdMap.put(i, null);
             }
         }
     }
@@ -108,7 +110,7 @@ public class Pudding {
         for (int i = 0; i < numNodes - 1; i++) {
             for (int j = i + 1; j < numNodes; j++) {
                 double distance = nodes[i].pos.distance(nodes[j].pos);
-                distanceMap.setEdgeValue(i, j, distance);
+                distanceMap.setEdgeWeight(i, j, distance);
             }
         }
     }
@@ -208,9 +210,9 @@ public class Pudding {
     private void calcDraggingForceAccelerationForNode(int nodeId) {
         // if the node's being dragged, add the acceleration due to force
         // from being dragged by mouse
-        Integer pointerId = nodePointerMap.get(nodeId);
+        Integer pointerId = nodeIdToPointerIdMap.get(nodeId);
         if (pointerId != null) {
-            Point2d pointerPos = pointerPosMap.get(pointerId);
+            Point2d pointerPos = pointerIdToPosMap.get(pointerId);
             if (pointerPos != null) {
                 Vector2d acceleration = calcDraggingAcceleration(nodes[nodeId].pos, pointerPos);
                 nodes[nodeId].accel.add(acceleration);
@@ -234,13 +236,13 @@ public class Pudding {
         distanceNow.sub(nodes[nodeId1].pos, nodes[nodeId2].pos);
 
         // how much has the binding between the 2 nodes been stretched
-        double stretched = distanceNow.length() - distanceMap.getEdgeValue(nodeId1, nodeId2);
+        double stretched = distanceNow.length() - distanceMap.getEdgeWeight(nodeId1, nodeId2);
 
         // Hooke's law! Note that k = elasticity / length of spring
-        double force = bindingElasticity / distanceMap.getEdgeValue(nodeId1, nodeId2) * stretched;
+        double force = bindingElasticity / distanceMap.getEdgeWeight(nodeId1, nodeId2) * stretched;
 
         // save the force in the stressMap
-        stressMap.setEdgeValue(nodeId1, nodeId2, force);
+        stressMap.setEdgeWeight(nodeId1, nodeId2, force);
 
         // the acceleration is the force / mass
         Vector2d acceleration = distanceNow;
@@ -387,10 +389,10 @@ public class Pudding {
      * @param pointerId
      */
     public void setMousePos(double x, double y, int pointerId) {
-        if (pointerPosMap.containsKey(pointerId)) {
-            pointerPosMap.get(pointerId).set(x, y);
+        if (pointerIdToPosMap.containsKey(pointerId)) {
+            pointerIdToPosMap.get(pointerId).set(x, y);
         } else {
-            pointerPosMap.put(pointerId, new Point2d(x, y));
+            pointerIdToPosMap.put(pointerId, new Point2d(x, y));
         }
     }
 
@@ -409,7 +411,7 @@ public class Pudding {
         int nearestNodeId = 0;
 
         for (int i = 0; i < numNodes; i++) {
-            distanceToMouse = nodes[i].pos.distance(pointerPosMap.get(pointerId));
+            distanceToMouse = nodes[i].pos.distance(pointerIdToPosMap.get(pointerId));
             if (distanceToMouse < minDistanceToMouse) {
                 minDistanceToMouse = distanceToMouse;
                 nearestNodeId = i;
@@ -417,12 +419,12 @@ public class Pudding {
         }
 
         // set that node 's dragging pointer
-        nodePointerMap.put(nearestNodeId, pointerId);
+        nodeIdToPointerIdMap.put(nearestNodeId, pointerId);
     }
 
     public void stopDragging(int pointerId) {
         // find the node currently being dragged by that pointer
-        for (Map.Entry<Integer, Integer> entry : nodePointerMap.entrySet()) {
+        for (Map.Entry<Integer, Integer> entry : nodeIdToPointerIdMap.entrySet()) {
             Integer nodePointerId = entry.getValue();
             if (nodePointerId != null && nodePointerId == pointerId) {
                 entry.setValue(null);
