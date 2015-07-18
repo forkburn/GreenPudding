@@ -14,10 +14,10 @@
     <string name="pref_render_mode_title">Rendering mode</string>
     <string name="pref_pudding_radius_key">puddingRadius</string>
     <string name="pref_pudding_radius_title">Radius</string>
-    <string name="pref_pudding_radius_default">180</string>
+    <string name="pref_pudding_radius_default">300</string>
     <string name="pref_pudding_elasticity_title">Elasticity</string>
     <string name="pref_pudding_elasticity_key">elasticity</string>
-    <string name="pref_pudding_elasticity_default">10</string>
+    <string name="pref_pudding_elasticity_default">20</string>
     <string name="pref_pudding_color_title">Pudding color</string>
     <string name="pref_pudding_color_summary">Choose the color for the pudding</string>
     <string name="pref_pudding_color_key">puddingColor</string>

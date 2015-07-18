@@ -26,8 +26,6 @@ public class PuddingPreferencesActivity extends PreferenceActivity implements On
 
         //  populate the pref screen with xml content
         addPreferencesFromResource(R.xml.preferences);
-//        initNumericEditTextPreference(R.string.pref_pudding_radius_key);
-//        initNumericEditTextPreference(R.string.pref_number_of_nodes_key);
     }
 
     protected void initSharedPreference() {
