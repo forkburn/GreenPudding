@@ -2,11 +2,7 @@ package com.greenpudding.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -16,24 +12,25 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.greenpudding.PuddingFacade;
 import com.greenpudding.R;
-import com.greenpudding.model.Pudding;
-import com.greenpudding.util.PuddingConfigurator;
 import com.greenpudding.view.PuddingSurfaceView;
 
-public class MainActivity extends Activity implements SensorEventListener {
+public class MainActivity extends Activity  {
 
-    // use to scale the hardware provided gravity
-    public static float GRAVITY_SCALER = 0.5f;
-    private final String PREF_FRAGMENT_TAG = "PREF_FRAGMENT_TAG";
-    // a reference to the app preference
-    SharedPreferences prefs;
-    // the physical model of the pudding
-    private Pudding pudding;
-    private SensorManager sensorManager;
-    private Sensor accelerometer;
-    private boolean isAccelerometerPresent;
+//    // use to scale the hardware provided gravity
+//    public static float GRAVITY_SCALER = 0.5f;
+//    // a reference to the app preference
+//    private SharedPreferences prefs;
+//    // the physical model of the pudding
+//    private PuddingModel pudding;
+//    private SensorManager sensorManager;
+//    private Sensor accelerometer;
+//    private boolean isAccelerometerPresent;
     private PuddingSurfaceView puddingView;
+
+
+    private PuddingFacade puddingFacade = new PuddingFacade();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,16 +47,10 @@ public class MainActivity extends Activity implements SensorEventListener {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         // check the accelerometer
-        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        if (accelerometer == null) {
-            isAccelerometerPresent = false;
-        } else {
-            isAccelerometerPresent = true;
-        }
+        puddingFacade.setSensorManager((SensorManager) getSystemService(SENSOR_SERVICE));
 
         // get the preferences
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        puddingFacade.setPrefs(PreferenceManager.getDefaultSharedPreferences(this));
 
         // create instance of the PuddingView, and show the view
         setContentView(R.layout.pudding_layout);
@@ -67,56 +58,29 @@ public class MainActivity extends Activity implements SensorEventListener {
         // get a handle to the view
         puddingView = (PuddingSurfaceView) findViewById(R.id.puddingView);
 
-        // create the pudding model
-        pudding = new Pudding();
-
         // give a handle of the pudding to the view
-        puddingView.setPudding(pudding);
+        puddingView.setPuddingFacade(puddingFacade);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
         // apply the pref to the pudding
-        applyPrefs();
-
-        // start listening on the sensor
-        if (isAccelerometerPresent && pudding.getIsGravityEnabled()) {
-            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-        }
-
+        puddingFacade.applyPrefs(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        // stop monitoring the sensor
-        if (isAccelerometerPresent) {
-            sensorManager.unregisterListener(this);
-        }
     }
 
-    private void applyPrefs() {
-        PuddingConfigurator.applyPrefs(pudding, prefs, this);
-    }
 
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        // need to invert the x value since the sensor and the drawing api has
-        // different coordinate system
-        pudding.setGravity(-event.values[0] * GRAVITY_SCALER, event.values[1] * GRAVITY_SCALER);
-    }
 
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // do nothing
-    }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
         // do nothing on orientation change
+        super.onConfigurationChanged(newConfig);
     }
 
     @Override

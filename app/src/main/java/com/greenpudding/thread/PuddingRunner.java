@@ -3,22 +3,22 @@ package com.greenpudding.thread;
 import android.graphics.Canvas;
 import android.view.SurfaceHolder;
 
-import com.greenpudding.model.Pudding;
+import com.greenpudding.model.PuddingModel;
 
 /**
  * A thread that repeatedly gets the canvas and ask the pudding to render on the
  * canvas.
  * 
  */
-public class PuddingRenderThread implements Runnable {
+public class PuddingRunner implements Runnable {
 
 	private SurfaceHolder surfaceHolder;
-	private Pudding pudding;
+	private PuddingModel pudding;
 
 	// flag indicating whether thread should continue to run
 	private boolean stopFlag = false;
 
-	public PuddingRenderThread(SurfaceHolder holder) {
+	public PuddingRunner(SurfaceHolder holder) {
 		surfaceHolder = holder;
 	}
 
@@ -42,11 +42,11 @@ public class PuddingRenderThread implements Runnable {
 		}
 	}
 
-	public Pudding getPudding() {
+	public PuddingModel getPudding() {
 		return pudding;
 	}
 
-	public void setPudding(Pudding pudding) {
+	public void setPudding(PuddingModel pudding) {
 		this.pudding = pudding;
 	}
 

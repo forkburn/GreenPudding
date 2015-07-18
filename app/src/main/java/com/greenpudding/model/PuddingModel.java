@@ -12,7 +12,7 @@ import java.util.List;
 
 import javax.vecmath.Vector2d;
 
-public class Pudding {
+public class PuddingModel {
     public static final int DEFAULT_FILL_COLOR = 0xFF9FD867;
     public static final int DEFAULT_BACKGROUND_COLOR = 0xFFFFFFFF;
     public static final double DEFAULT_BINDING_ELASTICITY = 20f;
@@ -57,7 +57,7 @@ public class Pudding {
 
     private DraggingManager draggingManager;
 
-    public Pudding() {
+    public PuddingModel() {
         renderer = new PuddingRenderer();
         distanceMap = new UndirectedWeightedGraph();
         forceMap = new UndirectedWeightedGraph();

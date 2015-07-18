@@ -14,10 +14,6 @@ import com.greenpudding.R;
 public class PuddingPreferencesActivity extends PreferenceActivity implements OnPreferenceClickListener,
         OnPreferenceChangeListener {
 
-    private static final int MAX_PUDDING_RADIUS = 1000;
-    private static final int MIN_PUDDING_RADIUS = 50;
-    private static final int MAX_NUMBER_OF_NODES = 20;
-    private static final int MIN_NUMBER_OF_NODES = 5;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,12 +49,6 @@ public class PuddingPreferencesActivity extends PreferenceActivity implements On
             // the radius pref
             Integer inputRadius = Integer.parseInt(value.toString());
 
-            // check that the input is within valid range
-            if (inputRadius < MIN_PUDDING_RADIUS) {
-                inputRadius = MIN_PUDDING_RADIUS;
-            } else if (inputRadius > MAX_PUDDING_RADIUS) {
-                inputRadius = MAX_PUDDING_RADIUS;
-            }
             // save the pref
             pref.getEditor().putString(pref.getKey(), inputRadius.toString()).commit();
 
@@ -66,12 +56,6 @@ public class PuddingPreferencesActivity extends PreferenceActivity implements On
             // the number of nodes pref
             Integer numberOfNodes = Integer.parseInt(value.toString());
 
-            // check that the input is within valid range
-            if (numberOfNodes < MIN_NUMBER_OF_NODES) {
-                numberOfNodes = MIN_NUMBER_OF_NODES;
-            } else if (numberOfNodes > MAX_NUMBER_OF_NODES) {
-                numberOfNodes = MAX_NUMBER_OF_NODES;
-            }
             // save the pref
             pref.getEditor().putString(pref.getKey(), numberOfNodes.toString()).commit();
 

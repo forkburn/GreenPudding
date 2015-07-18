@@ -31,7 +31,7 @@ public class PuddingRenderer {
     private Paint strokePaint;
 
 
-    private int backgroundColor = Pudding.DEFAULT_BACKGROUND_COLOR;
+    private int backgroundColor = PuddingModel.DEFAULT_BACKGROUND_COLOR;
     private RenderMode renderMode = RenderMode.NORMAL;
 
     public PuddingRenderer() {

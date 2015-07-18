@@ -1,6 +1,6 @@
 package com.greenpudding.model.dragging;
 
-import com.greenpudding.model.Pudding;
+import com.greenpudding.model.PuddingModel;
 import com.greenpudding.model.PuddingNode;
 
 import java.util.ArrayList;
@@ -72,7 +72,7 @@ public class Pointer {
         displacement.sub(draggingPos, draggedPos);
         Vector2d acceleration = new Vector2d(displacement);
         // accel = force/mass = scale*displacement/mass
-        acceleration.scale(Pudding.DRAGGING_FORCE_SCALE / Pudding.NODE_MASS);
+        acceleration.scale(PuddingModel.DRAGGING_FORCE_SCALE / PuddingModel.NODE_MASS);
         return acceleration;
     }
 

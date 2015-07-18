@@ -1,1 +1,31 @@
-change icon to a non regular blob
+unify wallpaper and app running
+
+currently:
+
+mainActiviy:
+    has puddingView, pudding, prefs, sensors
+    gets puddingView from calls
+    gives pudding to puddingView
+    puddingView gets holder from call. Has runner, thread.
+        runs thread. receives touch
+
+
+wallpaper service engine:
+    has pudding, holder, sensors, runner, thread, prefs
+    dont have view. gets holder directly by call
+
+
+===========
+
+facade:
+    should have:
+        self create:
+            pudding , runner, thread
+        injected:
+            sensors, prefs, holder
+
+
+main act:
+    gets view, creates fasade, inject things to facade, inject facade to view. let view call facade to start thread
+
+wallpaper:

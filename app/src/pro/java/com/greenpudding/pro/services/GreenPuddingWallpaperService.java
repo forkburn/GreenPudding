@@ -10,14 +10,14 @@ import android.service.wallpaper.WallpaperService;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
-import com.greenpudding.activities.MainActivity;
-import com.greenpudding.model.Pudding;
-import com.greenpudding.thread.PuddingRenderThread;
+import com.greenpudding.PuddingFacade;
+import com.greenpudding.model.PuddingModel;
+import com.greenpudding.thread.PuddingRunner;
 import com.greenpudding.util.PuddingConfigurator;
 
 public class GreenPuddingWallpaperService extends WallpaperService {
 
-    public static final String SHARED_PREFS_NAME = "greenPuddingSettings";
+    public static final String SHARED_PREFS_NAME = "greenPuddingWallpaperSettings";
     private PuddingWallpaperEngine engine;
 
     @Override
@@ -44,7 +44,7 @@ public class GreenPuddingWallpaperService extends WallpaperService {
             SharedPreferences.OnSharedPreferenceChangeListener {
 
         // the physical model of the pudding
-        private Pudding pudding;
+        private PuddingModel pudding;
 
         private SurfaceHolder surfaceHolder;
 
@@ -52,8 +52,8 @@ public class GreenPuddingWallpaperService extends WallpaperService {
         private Sensor accelerometer;
         private boolean isAccelerometerPresent;
 
-        private PuddingRenderThread puddingRenderThread;
-        private Thread puddingRendererThread;
+        private PuddingRunner puddingRunner;
+        private Thread puddingRunnerThread;
 
         private SharedPreferences prefs;
 
@@ -69,7 +69,7 @@ public class GreenPuddingWallpaperService extends WallpaperService {
             }
 
             // create the pudding model
-            pudding = new Pudding();
+            pudding = new PuddingModel();
             pudding.refreshNodes();
 
             // get the prefs
@@ -114,8 +114,8 @@ public class GreenPuddingWallpaperService extends WallpaperService {
         public void onSensorChanged(SensorEvent event) {
             // need to invert the x value since the sensor and the drawing api
             // has different coordinates
-            pudding.setGravity(-event.values[0] * MainActivity.GRAVITY_SCALER,
-                    event.values[1] * MainActivity.GRAVITY_SCALER);
+            pudding.setGravity(-event.values[0] * PuddingFacade.GRAVITY_SCALER,
+                    event.values[1] * PuddingFacade.GRAVITY_SCALER);
         }
 
         @Override
@@ -141,18 +141,18 @@ public class GreenPuddingWallpaperService extends WallpaperService {
         }
 
         public void startRendererThread() {
-            puddingRenderThread = new PuddingRenderThread(surfaceHolder);
-            puddingRenderThread.setPudding(pudding);
-            puddingRendererThread = new Thread(puddingRenderThread);
-            puddingRendererThread.start();
+            puddingRunner = new PuddingRunner(surfaceHolder);
+            puddingRunner.setPudding(pudding);
+            puddingRunnerThread = new Thread(puddingRunner);
+            puddingRunnerThread.start();
         }
 
         public void stopRendererThread() {
             boolean retry = true;
-            puddingRenderThread.setStopFlag(true);
+            puddingRunner.setStopFlag(true);
             while (retry) {
                 try {
-                    puddingRendererThread.join();
+                    puddingRunnerThread.join();
                     retry = false;
                 } catch (InterruptedException e) {
                 }
