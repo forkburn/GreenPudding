@@ -4,8 +4,8 @@ android {
     compileSdkVersion 15
     buildToolsVersion "21.1.2"
     defaultConfig {
-        versionCode 10
-        versionName "10"
+        versionCode 11
+        versionName "11"
         minSdkVersion 11
         targetSdkVersion 11
     }
@@ -21,7 +21,7 @@ android {
             applicationId "com.greenpudding.pro"
         }
         free {
-            applicationId "com.greenpudding.free"
+            applicationId "com.greenpudding"
         }
     }
     compileOptions {
