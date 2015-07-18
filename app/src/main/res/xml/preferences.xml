@@ -33,7 +33,7 @@
             android:dialogTitle="@string/pref_pudding_elasticity_title"
             android:key="@string/pref_pudding_elasticity_key"
             android:title="@string/pref_pudding_elasticity_title"
-            custom:maxValue="100"
+            custom:maxValue="30"
             custom:minValue="10" />
 
 
