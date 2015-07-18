@@ -7,7 +7,7 @@ import javax.vecmath.Vector2d;
  * defines the physical attributes of a node in the pudding
  * 
  */
-class PuddingNode {
+public class PuddingNode {
 
 	// current position
 	public Point2d pos;
