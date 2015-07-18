@@ -1,7 +1,5 @@
 package com.greenpudding.model.dragging;
 
-import android.util.Log;
-
 import com.greenpudding.model.Pudding;
 import com.greenpudding.model.PuddingNode;
 
@@ -58,7 +56,7 @@ public class Pointer {
             Vector2d acceleration = getDraggingAcceleration(node.pos, nodeTargetPos);
             // the further the node is from pointer, the less force it gets
             double nodeDistanceToPointer = pointerCurrentPos.distance(nodeTargetPos);
-            acceleration.scale(1 - nodeDistanceToPointer / DraggingManager.DRAG_RADIUS);
+            acceleration.scale(1 - nodeDistanceToPointer / DraggingManager.getDragRadius());
             node.accel.add(acceleration);
         }
     }

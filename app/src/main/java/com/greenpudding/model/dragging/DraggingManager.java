@@ -2,7 +2,6 @@ package com.greenpudding.model.dragging;
 
 import com.greenpudding.model.PuddingNode;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +11,7 @@ import javax.vecmath.Point2d;
 public class DraggingManager {
 
     // nodes withing this radius will be dragged by pointer
-    public static double DRAG_RADIUS = 200;
+    private  static double dragRadius = 300;
 
 
     // map from pointerId to the pointers
@@ -33,7 +32,7 @@ public class DraggingManager {
         // find the nodes close to the pointer and drag them
         for (int i = 0; i < nodes.size(); i++) {
             double distance = nodes.get(i).pos.distance(pointerStartPos);
-            if (distance <= DRAG_RADIUS) {
+            if (distance <= dragRadius) {
                 pointer.addDraggedNode(i, nodes.get(i));
             }
         }
@@ -59,5 +58,13 @@ public class DraggingManager {
 
     public void setPointerCurrentPos(int pointerId, double x, double y) {
         pointersMap.get(pointerId).setPointerCurrentPos(new Point2d(x, y));
+    }
+
+    public static double getDragRadius() {
+        return dragRadius;
+    }
+
+    public static void setDragRadius(double d) {
+        dragRadius = d;
     }
 }

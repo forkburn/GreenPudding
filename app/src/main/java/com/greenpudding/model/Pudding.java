@@ -7,13 +7,9 @@ import com.greenpudding.model.dragging.DraggingManager;
 import com.greenpudding.util.UndirectedWeightedGraph;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
-import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 
 public class Pudding {
@@ -36,7 +32,7 @@ public class Pudding {
     // a 2D array storing the distance between each pair of nodes
     private UndirectedWeightedGraph distanceMap;
     // a 2D array storing the stress on the binding of each pair of nodes
-    private UndirectedWeightedGraph stressMap;
+    private UndirectedWeightedGraph forceMap;
     // Physical properties
     // radius, in pixels
     private int radius = DEFAULT_RADIUS;
@@ -62,7 +58,7 @@ public class Pudding {
     public Pudding() {
         renderer = new PuddingRenderer();
         distanceMap = new UndirectedWeightedGraph();
-        stressMap = new UndirectedWeightedGraph();
+        forceMap = new UndirectedWeightedGraph();
         boundingRect = new Rect();
         setColor(DEFAULT_FILL_COLOR);
         setNumOfNodes(DEFAULT_NUM_NODES);
@@ -197,28 +193,27 @@ public class Pudding {
 
     private void updateBindingForceAccelerationForNodes(int nodeId1, int nodeId2) {
         // the current distance between the 2 nodes is
-        Vector2d distanceNow = new Vector2d(0, 0);
-        distanceNow.sub(nodes.get(nodeId1).pos, nodes.get(nodeId2).pos);
+        Vector2d distanceBetween = new Vector2d();
+        distanceBetween.sub(nodes.get(nodeId1).pos, nodes.get(nodeId2).pos);
 
         // how much has the binding between the 2 nodes been stretched
-        double stretched = distanceNow.length() - distanceMap.getEdgeWeight(nodeId1, nodeId2);
+        double stretched = distanceBetween.length() - distanceMap.getEdgeWeight(nodeId1, nodeId2);
 
-        // Hooke's law! Note that k = elasticity / length of spring
+        // Hooke's law. force = k * x; k = elasticity / original length of spring
         double force = bindingElasticity / distanceMap.getEdgeWeight(nodeId1, nodeId2) * stretched;
 
-        // save the force in the stressMap
-        stressMap.setEdgeWeight(nodeId1, nodeId2, force);
+        // save the force in the forceMap
+        forceMap.setEdgeWeight(nodeId1, nodeId2, force);
 
-        // the acceleration is the force / mass
-        Vector2d acceleration = distanceNow;
+        Vector2d acceleration = distanceBetween;
         double norm = acceleration.length();
 
-        // do not allow the divisor to be too small, to prevent floating
-        // error
+        // make sure divisor is not too small. prevent floating error
         if (norm < NODE_DISTANCE_THRESHOLD) {
             norm = NODE_DISTANCE_THRESHOLD;
         }
 
+        // the acceleration vector = force / mass * normalizedDistanceVector
         acceleration.scale(force / NODE_MASS / norm);
 
         // apply the force to the 2 nodes and their acceleration is
@@ -275,7 +270,7 @@ public class Pudding {
      * @param canvas
      */
     public void render(Canvas canvas) {
-        renderer.render(canvas, nodes, stressMap);
+        renderer.render(canvas, nodes, forceMap);
     }
 
 
@@ -285,6 +280,8 @@ public class Pudding {
      * @param radius
      */
     public void setRadius(int radius) {
+        // for best effect, set dragging radius to the same as pudding size
+        DraggingManager.setDragRadius(radius);
         this.radius = radius;
     }
 
