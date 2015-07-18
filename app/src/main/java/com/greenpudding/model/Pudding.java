@@ -15,11 +15,13 @@ import javax.vecmath.Vector2d;
 public class Pudding {
     public static final int DEFAULT_FILL_COLOR = 0xFF9FD867;
     public static final int DEFAULT_BACKGROUND_COLOR = 0xFFFFFFFF;
-    public static final double DEFAULT_BINDING_ELASTICITY = 10f;
+    public static final double DEFAULT_BINDING_ELASTICITY = 20f;
     public static final double DEFAULT_PINNING_ELASTICITY = 0.1f;
     public static final double DEFAULT_DAMPING_FACTOR = 0.8f;
-    public static final int DEFAULT_RADIUS = 100;
+    public static final int DEFAULT_RADIUS = 300;
     public static final int DEFAULT_NUM_NODES = 12;
+    public  static final boolean DEFAULT_IS_GRAVITY_ENABLED = true;
+    public  static final boolean DEFAULT_IS_PINNED = false;
 
     // minimal distance between nodes for the elasticity to work. prevents bug due to floating error
     public static final double NODE_DISTANCE_THRESHOLD = 0.01f;
@@ -37,10 +39,10 @@ public class Pudding {
     // radius, in pixels
     private int radius = DEFAULT_RADIUS;
     // the gravity on the nodes
-    private Boolean isGravityEnabled = true;
+    private Boolean isGravityEnabled = DEFAULT_IS_GRAVITY_ENABLED;
     private Vector2d gravity = new Vector2d(0, 0);
     // whether nodes are pinned to their spawn position by a force
-    private Boolean isPinned = false;
+    private Boolean isPinned = DEFAULT_IS_PINNED;
     // the strength of the force pinning a node to its original position
     private double pinningElasticity = DEFAULT_PINNING_ELASTICITY;
     // the strength in the bond between 2 nodes
