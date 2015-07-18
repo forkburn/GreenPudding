@@ -1,5 +1,7 @@
 package com.greenpudding.model.dragging;
 
+import android.util.Log;
+
 import com.greenpudding.model.Pudding;
 import com.greenpudding.model.PuddingNode;
 
@@ -21,8 +23,8 @@ public class Pointer {
     // ids of the nodes being dragged by this pointer
     private List<Integer> draggedNodeIds = new ArrayList<>();
 
-    // position of the dragged nodes when dragging started
-    private Map<Integer, Point2d> nodesStartPos = new HashMap<>();
+    // map from nodeId to position of the dragged nodes when dragging started
+    private Map<Integer, Point2d> nodesStartPosMap = new HashMap<>();
 
 
     public Pointer(Point2d pointerStartPos) {
@@ -33,7 +35,7 @@ public class Pointer {
         draggedNodeIds.add(nodeId);
 
         // store the nodes' starting position
-        nodesStartPos.put(nodeId, node.pos);
+        nodesStartPosMap.put(nodeId, new Point2d(node.pos));
     }
 
     /**
@@ -50,10 +52,13 @@ public class Pointer {
         for (int nodeId : draggedNodeIds) {
             // nodeTargetPos is the node's original position + mouse drag displacement vector
             Point2d nodeTargetPos = new Point2d();
-            nodeTargetPos.add(nodesStartPos.get(nodeId), pointerDisplacement);
+            nodeTargetPos.add(nodesStartPosMap.get(nodeId), pointerDisplacement);
 
             PuddingNode node = nodes.get(nodeId);
             Vector2d acceleration = getDraggingAcceleration(node.pos, nodeTargetPos);
+            // the further the node is from pointer, the less force it gets
+            double nodeDistanceToPointer = pointerCurrentPos.distance(nodeTargetPos);
+            acceleration.scale(1 - nodeDistanceToPointer / DraggingManager.DRAG_RADIUS);
             node.accel.add(acceleration);
         }
     }

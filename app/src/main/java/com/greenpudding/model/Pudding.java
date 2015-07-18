@@ -30,7 +30,7 @@ public class Pudding {
     // mass of each node. used for calculating acceleration
     public static final double NODE_MASS = 1;
     // strength of the force dragging the node by mouse
-    public static final double DRAGGING_FORCE_SCALE = 0.1;
+    public static final double DRAGGING_FORCE_SCALE = 0.5;
     // the nodes representing the mass points.
     private List<PuddingNode> nodes = new LinkedList<>();
     // a 2D array storing the distance between each pair of nodes
@@ -353,7 +353,7 @@ public class Pudding {
      * @param y
      * @param pointerId
      */
-    public void setMousePos(double x, double y, int pointerId) {
+    public  void setMousePos(double x, double y, int pointerId) {
         draggingManager.setPointerCurrentPos(pointerId, x, y);
     }
 
@@ -363,11 +363,11 @@ public class Pudding {
      * @param x Mouse position where the dragging starts
      * @param y Mouse position where the dragging starts
      */
-    public void startDragging(double x, double y, int pointerId) {
+    public  void startDragging(double x, double y, int pointerId) {
         draggingManager.startDragging(pointerId, x, y, nodes);
     }
 
-    public void stopDragging(int pointerId) {
+    public  void stopDragging(int pointerId) {
         draggingManager.stopDragging(pointerId);
     }
 

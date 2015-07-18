@@ -1,5 +1,7 @@
 change icon to a non regular blob
 
+profile performane
+
 dragging: current solution
     on touch: find the closes dot, give it a force, proportional to how far it's from mouse
 dragging:

@@ -83,13 +83,22 @@ public class PuddingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        synchronized (surfaceHolder) {
+            // the below code modifies the pudding object, so we lock onto the surface holder
+            // and make sure the rendering thread don't interfere with pudding obj
+            processTouchEvent(event);
+        }
+        return true;
+    }
 
+    private void processTouchEvent(MotionEvent event) {
         int action = event.getActionMasked();
 
         switch (action) {
             case (MotionEvent.ACTION_DOWN): {
                 // First touch begins
                 pudding.startDragging(event.getX(), event.getY(), event.getPointerId(0));
+                pudding.setMousePos(event.getX(), event.getY(), event.getPointerId(0));
                 break;
             }
             case (MotionEvent.ACTION_UP): {
@@ -99,8 +108,9 @@ public class PuddingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
             }
             case (MotionEvent.ACTION_POINTER_DOWN): {
                 // an additional touch begins
-                int pointerIndex = event.getActionIndex();
-                pudding.startDragging(event.getX(pointerIndex), event.getY(pointerIndex), event.getPointerId(pointerIndex));
+                int idx = event.getActionIndex();
+                pudding.startDragging(event.getX(idx), event.getY(idx), event.getPointerId(idx));
+                pudding.setMousePos(event.getX(idx), event.getY(idx), event.getPointerId(idx));
                 break;
             }
             case (MotionEvent.ACTION_POINTER_UP): {
@@ -124,7 +134,6 @@ public class PuddingSurfaceView extends SurfaceView implements SurfaceHolder.Cal
             }
             default:
         }
-        return true;
     }
 
 }
