@@ -1,14 +1,12 @@
 package com.greenpudding;
 
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
@@ -40,6 +38,7 @@ public class PuddingFacade implements SensorEventListener {
 
     public void setPrefs(SharedPreferences prefs) {
         this.prefs = prefs;
+        applyPrefs();
     }
 
     public SensorManager getSensorManager() {
@@ -75,7 +74,6 @@ public class PuddingFacade implements SensorEventListener {
         if (isAccelerometerPresent && pudding.getIsGravityEnabled()) {
             sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         }
-
 
         puddingRunner = new PuddingRunner(surfaceHolder);
         puddingRunner.setPudding(pudding);
@@ -154,9 +152,8 @@ public class PuddingFacade implements SensorEventListener {
         }
     }
 
-    public void applyPrefs(Context context) {
-
-        PuddingConfigurator.applyPrefs(pudding, prefs, context);
+    public void applyPrefs() {
+        PuddingConfigurator.applyPrefs(pudding, prefs);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.greenpudding.activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.hardware.SensorManager;
@@ -16,21 +17,13 @@ import com.greenpudding.PuddingFacade;
 import com.greenpudding.R;
 import com.greenpudding.view.PuddingSurfaceView;
 
-public class MainActivity extends Activity  {
-
-//    // use to scale the hardware provided gravity
-//    public static float GRAVITY_SCALER = 0.5f;
-//    // a reference to the app preference
-//    private SharedPreferences prefs;
-//    // the physical model of the pudding
-//    private PuddingModel pudding;
-//    private SensorManager sensorManager;
-//    private Sensor accelerometer;
-//    private boolean isAccelerometerPresent;
-    private PuddingSurfaceView puddingView;
-
+public class MainActivity extends Activity {
 
     private PuddingFacade puddingFacade = new PuddingFacade();
+    private static Context context;
+    public static Context getContext() {
+        return context;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,6 +32,7 @@ public class MainActivity extends Activity  {
     }
 
     protected void init() {
+        context = getApplicationContext();
 
         // hide title
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -56,7 +50,7 @@ public class MainActivity extends Activity  {
         setContentView(R.layout.pudding_layout);
 
         // get a handle to the view
-        puddingView = (PuddingSurfaceView) findViewById(R.id.puddingView);
+        PuddingSurfaceView puddingView = (PuddingSurfaceView) findViewById(R.id.puddingView);
 
         // give a handle of the pudding to the view
         puddingView.setPuddingFacade(puddingFacade);
@@ -65,17 +59,14 @@ public class MainActivity extends Activity  {
     @Override
     protected void onResume() {
         super.onResume();
-        // apply the pref to the pudding
-        puddingFacade.applyPrefs(this);
+        // in case user has changed something in pref page, need to apply new prefs here
+        puddingFacade.applyPrefs();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
     }
-
-
-
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {

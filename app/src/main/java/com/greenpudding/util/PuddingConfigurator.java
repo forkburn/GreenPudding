@@ -4,13 +4,15 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.greenpudding.R;
+import com.greenpudding.activities.MainActivity;
 import com.greenpudding.model.PuddingModel;
 import com.greenpudding.model.RenderMode;
 
 public class PuddingConfigurator {
 
 
-    public static void applyPrefs(PuddingModel pudding, SharedPreferences prefs, Context context) {
+    public static void applyPrefs(PuddingModel pudding, SharedPreferences prefs) {
+        Context context = MainActivity.getContext();
 
         pudding.setRadius(prefs.getInt(context.getString(R.string.pref_pudding_radius_key), PuddingModel.DEFAULT_RADIUS));
 
