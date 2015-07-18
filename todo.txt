@@ -1,1 +1,3 @@
+pudding tend to flip. modify physics so that when a link is compressed much, it's harder to compress more
+
 allow picture as background
