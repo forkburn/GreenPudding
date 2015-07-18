@@ -26,11 +26,11 @@ public class Pudding {
     // if distance between 2 nodes is smaller than this, no force will result
     // between the nodes. This prevents float point error when we have a very
     // small denominator
-    private static final double DISTANCE_THRESHOLD = 0.01f;
+    public static final double NODE_DISTANCE_THRESHOLD = 0.01f;
     // mass of each node. used for calculating acceleration
-    private static final double NODE_MASS = 1;
+    public static final double NODE_MASS = 1;
     // strength of the force dragging the node by mouse
-    private static final double DRAGGING_FORCE_SCALE = 0.5;
+    public static final double DRAGGING_FORCE_SCALE = 0.5;
     // the nodes representing the mass points.
     private List<PuddingNode> nodes = new LinkedList<>();
     // a 2D array storing the distance between each pair of nodes
@@ -194,7 +194,7 @@ public class Pudding {
         double norm = acceleration.length();
 
         // use a threshold to prevent weird floating error problem
-        if (norm > DISTANCE_THRESHOLD) {
+        if (norm > NODE_DISTANCE_THRESHOLD) {
             acceleration.scale(force / norm / NODE_MASS);
             nodes.get(nodeId).accel.add(acceleration);
         }
@@ -243,8 +243,8 @@ public class Pudding {
 
         // do not allow the divisor to be too small, to prevent floating
         // error
-        if (norm < DISTANCE_THRESHOLD) {
-            norm = DISTANCE_THRESHOLD;
+        if (norm < NODE_DISTANCE_THRESHOLD) {
+            norm = NODE_DISTANCE_THRESHOLD;
         }
 
         acceleration.scale(force / NODE_MASS / norm);
