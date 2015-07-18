@@ -30,7 +30,7 @@ public class PuddingRenderThread implements Runnable {
 				canvas = surfaceHolder.lockCanvas();
 				if (canvas != null) {
 					synchronized (surfaceHolder) {
-						pudding.calcFrame();
+						pudding.updatePhysics();
 						pudding.render(canvas);
 					}
 				}

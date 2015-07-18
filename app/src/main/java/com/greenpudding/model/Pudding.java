@@ -56,11 +56,10 @@ public class Pudding {
     private PuddingRenderer renderer;
     // the upper/lower limit of the position to where a node can move to
     private Rect boundingRect;
-    // fields to facilitate multi-touch dragging of nodes
-    // A mapping between pointer ID and their position
+    // A mapping from pointer ID to their position
     private Map<Integer, Point2d> pointerPosMap = new HashMap<Integer, Point2d>();
-    // A mapping between id of the node and the pointer that's dragging the
-    // node. If a node ID 's corresponding pointer ID is null, it means no
+    // A mapping from nodeId to pointerId that's dragging the
+    // node. If a nodeId maps to null, it means no
     // pointer is dragging the node
     private Map<Integer, Integer> nodePointerMap = new LinkedHashMap<Integer, Integer>();
 
@@ -142,36 +141,38 @@ public class Pudding {
     /**
      * Update the physical status of the pudding
      */
-    public void calcFrame() {
-        calcAcceleration();
-        calcVelocity();
-        calcPosition();
+    public void updatePhysics() {
+        updateAcceleration();
+        updateVelocity();
+        updatePosition();
     }
 
     /**
      * calculate the force imposed on each node, and their acceleration
      * accordingly using Hooke's law. Should be called on each frame.
      */
-    private void calcAcceleration() {
-        // for each node, calculate the acceleration due to gravity and pinning
+    private void updateAcceleration() {
+        // for each node, calculate the acceleration due to gravity and pinning and dragging
         for (int i = 0; i < numNodes; i++) {
-            calcAccelerationForNode(i);
+            resetAccelerationForNode(i);
+            updateAccelerationForNode(i);
         }
 
         // for each pair of nodes, calculate the acceleration due to the force
         // between nodes
         for (int i = 0; i < numNodes - 1; i++) {
             for (int j = i + 1; j < numNodes; j++) {
-                calcBindingForceAccelerationForNodes(i, j);
+                updateBindingForceAccelerationForNodes(i, j);
             }
         }
 
     }
 
-    private void calcAccelerationForNode(int nodeId) {
-        // clear the acceleration
+    private void resetAccelerationForNode(int nodeId) {
         nodes[nodeId].accel.set(0, 0);
+    }
 
+    private void updateAccelerationForNode(int nodeId) {
         // add the gravity
         if (isGravityEnabled) {
             nodes[nodeId].accel.add(gravity);
@@ -211,22 +212,23 @@ public class Pudding {
         if (pointerId != null) {
             Point2d pointerPos = pointerPosMap.get(pointerId);
             if (pointerPos != null) {
-                // calc the displacement between the pointer and the node
-                Vector2d displacement = new Vector2d(0, 0);
-                displacement.sub(pointerPos, nodes[nodeId].pos);
-
-                // the displacement * dragging force factor / mass = force /
-                // mass = acceleration
-                Vector2d acceleration = new Vector2d(displacement);
-
-                acceleration.scale(DRAGGING_FORCE_SCALE / NODE_MASS);
-
+                Vector2d acceleration = calcDraggingAcceleration(nodes[nodeId].pos, pointerPos);
                 nodes[nodeId].accel.add(acceleration);
             }
         }
     }
 
-    private void calcBindingForceAccelerationForNodes(int nodeId1, int nodeId2) {
+    private Vector2d calcDraggingAcceleration(Point2d draggedPos, Point2d draggingPos) {
+        // calc the displacement between the pointer and the node
+        Vector2d displacement = new Vector2d(0, 0);
+        displacement.sub(draggingPos, draggedPos);
+        Vector2d acceleration = new Vector2d(displacement);
+        // accel = force/mass = scale*displacement/mass
+        acceleration.scale(DRAGGING_FORCE_SCALE / NODE_MASS);
+        return acceleration;
+    }
+
+    private void updateBindingForceAccelerationForNodes(int nodeId1, int nodeId2) {
         // the current distance between the 2 nodes is
         Vector2d distanceNow = new Vector2d(0, 0);
         distanceNow.sub(nodes[nodeId1].pos, nodes[nodeId2].pos);
@@ -263,7 +265,7 @@ public class Pudding {
      * According to its acceleration, calculate each node's new velocity Should
      * be called on each frame
      */
-    private void calcVelocity() {
+    private void updateVelocity() {
         for (int i = 0; i < numNodes; i++) {
             nodes[i].veloc.add(nodes[i].accel);
             // apply the damping factor
@@ -274,7 +276,7 @@ public class Pudding {
     /**
      * According to its velocity, update each node's position
      */
-    private void calcPosition() {
+    private void updatePosition() {
         for (int i = 0; i < numNodes; i++) {
 
             nodes[i].pos.add(nodes[i].veloc);

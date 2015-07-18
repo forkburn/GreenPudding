@@ -1,8 +1,10 @@
 change icon to a non regular blob
 
 dragging: current solution
-    on touch: find the closes dot, give it a force, proportional to
+    on touch: find the closes dot, give it a force, proportional to how far it's from mouse
 dragging:
-    on touch: get drag start point. treat any dots within a radius as dragged. record their distance from drag point. set dragForceScaler = 1-disToTouchPoint/radius
-    on each frame dragging: record drag vector. each dragged dot gets a force= globalDragforceScaler * dragForceScaler * dragVector
+    on touch: get drag start point. treat any dots within a radius as dragged. record their displacement  vec from mouse and store in a list. nodePosRelativeToTouchPoint = nodePos - mousePos
+    on each frame dragging:
+        for each dragged point, nodeBalancePos = currentMousePos + nodePosRelativeToTouchPoint
+        for each dragged point, use its currentPos and balancePos to calc accelr
     on release: stop dragging state
