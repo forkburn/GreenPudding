@@ -7,6 +7,8 @@ import com.greenpudding.util.UndirectedWeightedGraph;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import javax.vecmath.Point2d;
@@ -20,8 +22,6 @@ public class Pudding {
     public static final double DEFAULT_DAMPING_FACTOR = 0.8f;
     public static final int DEFAULT_RADIUS = 100;
     public static final int DEFAULT_NUM_NODES = 12;
-    public static final int MAX_NODE_NUM = 100;
-    public static final int MIN_NODE_NUM = 3;
 
     // if distance between 2 nodes is smaller than this, no force will result
     // between the nodes. This prevents float point error when we have a very
@@ -31,10 +31,8 @@ public class Pudding {
     private static final double NODE_MASS = 1;
     // strength of the force dragging the node by mouse
     private static final double DRAGGING_FORCE_SCALE = 0.5;
-    // number of nodes
-    private int numNodes;
-    // the nodes representing the mass points
-    private PuddingNode[] nodes;
+    // the nodes representing the mass points.
+    private List<PuddingNode> nodes = new LinkedList<>();
     // a 2D array storing the distance between each pair of nodes
     private UndirectedWeightedGraph distanceMap;
     // a 2D array storing the stress on the binding of each pair of nodes
@@ -68,29 +66,25 @@ public class Pudding {
 
     public Pudding() {
         renderer = new PuddingRenderer();
-        nodes = new PuddingNode[MAX_NODE_NUM];
-        distanceMap = new UndirectedWeightedGraph(MAX_NODE_NUM);
-        stressMap = new UndirectedWeightedGraph(MAX_NODE_NUM);
+        distanceMap = new UndirectedWeightedGraph();
+        stressMap = new UndirectedWeightedGraph();
         boundingRect = new Rect();
         setColor(DEFAULT_FILL_COLOR);
         setNumOfNodes(DEFAULT_NUM_NODES);
     }
 
     public final void setNumOfNodes(int numOfNodes) {
-        if (numOfNodes >= MIN_NODE_NUM && numOfNodes <= MAX_NODE_NUM) {
-            numNodes = numOfNodes;
-            renderer.setNumNodes(numOfNodes);
-            // generate the nodes
-            for (int i = 0; i < numOfNodes; i++) {
-                nodes[i] = new PuddingNode();
-                // initially, no node is dragged by mouse
-                nodeIdToPointerIdMap.put(i, null);
-            }
+        renderer.setNumNodes(numOfNodes);
+        // generate the nodes
+        for (int i = 0; i < numOfNodes; i++) {
+            nodes.add(new PuddingNode());
+            // initially, no node is dragged by mouse
+            nodeIdToPointerIdMap.put(i, null);
         }
     }
 
     public int getNumNodes() {
-        return numNodes;
+        return nodes.size();
     }
 
     /**
@@ -107,9 +101,9 @@ public class Pudding {
     private void updateDistanceMap() {
         // calculate the distance between pairs of nodes, store them in
         // distanceMap
-        for (int i = 0; i < numNodes - 1; i++) {
-            for (int j = i + 1; j < numNodes; j++) {
-                double distance = nodes[i].pos.distance(nodes[j].pos);
+        for (int i = 0; i < nodes.size() - 1; i++) {
+            for (int j = i + 1; j < nodes.size(); j++) {
+                double distance = nodes.get(i).pos.distance(nodes.get(j).pos);
                 distanceMap.setEdgeWeight(i, j, distance);
             }
         }
@@ -119,16 +113,16 @@ public class Pudding {
      * Put the nodes on a circle around the given point
      */
     private void positionNodesAround(int xPos, int yPos) {
-        for (int i = 0; i < numNodes; i++) {
-            nodes[i].pos.x = xPos;
-            nodes[i].pos.y = yPos;
+        for (int i = 0; i < nodes.size(); i++) {
+            nodes.get(i).pos.x = xPos;
+            nodes.get(i).pos.y = yPos;
 
             // position the nodes along a circle
-            nodes[i].pos.x += getRadius() * Math.cos(i * 2 * Math.PI / numNodes);
-            nodes[i].pos.y += getRadius() * Math.sin(i * 2 * Math.PI / numNodes);
+            nodes.get(i).pos.x += getRadius() * Math.cos(i * 2 * Math.PI / nodes.size());
+            nodes.get(i).pos.y += getRadius() * Math.sin(i * 2 * Math.PI / nodes.size());
 
             // remember the current position as their pinned position
-            nodes[i].pinnedPos.set(nodes[i].pos);
+            nodes.get(i).pinnedPos.set(nodes.get(i).pos);
         }
     }
 
@@ -155,15 +149,15 @@ public class Pudding {
      */
     private void updateAcceleration() {
         // for each node, calculate the acceleration due to gravity and pinning and dragging
-        for (int i = 0; i < numNodes; i++) {
+        for (int i = 0; i < nodes.size(); i++) {
             resetAccelerationForNode(i);
             updateAccelerationForNode(i);
         }
 
         // for each pair of nodes, calculate the acceleration due to the force
         // between nodes
-        for (int i = 0; i < numNodes - 1; i++) {
-            for (int j = i + 1; j < numNodes; j++) {
+        for (int i = 0; i < nodes.size() - 1; i++) {
+            for (int j = i + 1; j < nodes.size(); j++) {
                 updateBindingForceAccelerationForNodes(i, j);
             }
         }
@@ -171,27 +165,26 @@ public class Pudding {
     }
 
     private void resetAccelerationForNode(int nodeId) {
-        nodes[nodeId].accel.set(0, 0);
+        nodes.get(nodeId).accel.set(0, 0);
     }
 
     private void updateAccelerationForNode(int nodeId) {
         // add the gravity
         if (isGravityEnabled) {
-            nodes[nodeId].accel.add(gravity);
+            nodes.get(nodeId).accel.add(gravity);
         }
 
-        // calculate the acceleration due to pinning
         if (isPinned) {
-            calcPinningForceAccelerationForNode(nodeId);
+            updatePinningForceAccelerationForNode(nodeId);
         }
 
-        calcDraggingForceAccelerationForNode(nodeId);
+        updateDraggingForceAccelerationForNode(nodeId);
     }
 
-    private void calcPinningForceAccelerationForNode(int nodeId) {
+    private void updatePinningForceAccelerationForNode(int nodeId) {
         // how much has the node deviated from where it's pinned
         Vector2d displacement = new Vector2d(0, 0);
-        displacement.sub(nodes[nodeId].pos, nodes[nodeId].pinnedPos);
+        displacement.sub(nodes.get(nodeId).pos, nodes.get(nodeId).pinnedPos);
 
         // the force due to the displacement
         double force = -pinningElasticity * displacement.length();
@@ -203,24 +196,24 @@ public class Pudding {
         // use a threshold to prevent weird floating error problem
         if (norm > DISTANCE_THRESHOLD) {
             acceleration.scale(force / norm / NODE_MASS);
-            nodes[nodeId].accel.add(acceleration);
+            nodes.get(nodeId).accel.add(acceleration);
         }
     }
 
-    private void calcDraggingForceAccelerationForNode(int nodeId) {
+    private void updateDraggingForceAccelerationForNode(int nodeId) {
         // if the node's being dragged, add the acceleration due to force
         // from being dragged by mouse
         Integer pointerId = nodeIdToPointerIdMap.get(nodeId);
         if (pointerId != null) {
             Point2d pointerPos = pointerIdToPosMap.get(pointerId);
             if (pointerPos != null) {
-                Vector2d acceleration = calcDraggingAcceleration(nodes[nodeId].pos, pointerPos);
-                nodes[nodeId].accel.add(acceleration);
+                Vector2d acceleration = getDraggingAcceleration(nodes.get(nodeId).pos, pointerPos);
+                nodes.get(nodeId).accel.add(acceleration);
             }
         }
     }
 
-    private Vector2d calcDraggingAcceleration(Point2d draggedPos, Point2d draggingPos) {
+    private Vector2d getDraggingAcceleration(Point2d draggedPos, Point2d draggingPos) {
         // calc the displacement between the pointer and the node
         Vector2d displacement = new Vector2d(0, 0);
         displacement.sub(draggingPos, draggedPos);
@@ -233,7 +226,7 @@ public class Pudding {
     private void updateBindingForceAccelerationForNodes(int nodeId1, int nodeId2) {
         // the current distance between the 2 nodes is
         Vector2d distanceNow = new Vector2d(0, 0);
-        distanceNow.sub(nodes[nodeId1].pos, nodes[nodeId2].pos);
+        distanceNow.sub(nodes.get(nodeId1).pos, nodes.get(nodeId2).pos);
 
         // how much has the binding between the 2 nodes been stretched
         double stretched = distanceNow.length() - distanceMap.getEdgeWeight(nodeId1, nodeId2);
@@ -258,9 +251,9 @@ public class Pudding {
 
         // apply the force to the 2 nodes and their acceleration is
         // affected
-        nodes[nodeId2].accel.add(acceleration);
+        nodes.get(nodeId2).accel.add(acceleration);
         acceleration.negate();
-        nodes[nodeId1].accel.add(acceleration);
+        nodes.get(nodeId1).accel.add(acceleration);
     }
 
     /**
@@ -268,10 +261,10 @@ public class Pudding {
      * be called on each frame
      */
     private void updateVelocity() {
-        for (int i = 0; i < numNodes; i++) {
-            nodes[i].veloc.add(nodes[i].accel);
+        for (int i = 0; i < nodes.size(); i++) {
+            nodes.get(i).veloc.add(nodes.get(i).accel);
             // apply the damping factor
-            nodes[i].veloc.scale(dampingFactor);
+            nodes.get(i).veloc.scale(dampingFactor);
         }
     }
 
@@ -279,25 +272,25 @@ public class Pudding {
      * According to its velocity, update each node's position
      */
     private void updatePosition() {
-        for (int i = 0; i < numNodes; i++) {
+        for (int i = 0; i < nodes.size(); i++) {
 
-            nodes[i].pos.add(nodes[i].veloc);
+            nodes.get(i).pos.add(nodes.get(i).veloc);
 
             // if the node is moving out of the valid area
-            if (nodes[i].pos.x > getBoundingRect().right) {
-                nodes[i].pos.x = getBoundingRect().right;
-                nodes[i].veloc.x = 0;
-            } else if (nodes[i].pos.x < getBoundingRect().left) {
-                nodes[i].pos.x = getBoundingRect().left;
-                nodes[i].veloc.x = 0;
+            if (nodes.get(i).pos.x > getBoundingRect().right) {
+                nodes.get(i).pos.x = getBoundingRect().right;
+                nodes.get(i).veloc.x = 0;
+            } else if (nodes.get(i).pos.x < getBoundingRect().left) {
+                nodes.get(i).pos.x = getBoundingRect().left;
+                nodes.get(i).veloc.x = 0;
             }
 
-            if (nodes[i].pos.y > getBoundingRect().bottom) {
-                nodes[i].pos.y = getBoundingRect().bottom;
-                nodes[i].veloc.y = 0;
-            } else if (nodes[i].pos.y < getBoundingRect().top) {
-                nodes[i].pos.y = getBoundingRect().top;
-                nodes[i].veloc.y = 0;
+            if (nodes.get(i).pos.y > getBoundingRect().bottom) {
+                nodes.get(i).pos.y = getBoundingRect().bottom;
+                nodes.get(i).veloc.y = 0;
+            } else if (nodes.get(i).pos.y < getBoundingRect().top) {
+                nodes.get(i).pos.y = getBoundingRect().top;
+                nodes.get(i).veloc.y = 0;
             }
         }
 
@@ -410,8 +403,8 @@ public class Pudding {
         double distanceToMouse;
         int nearestNodeId = 0;
 
-        for (int i = 0; i < numNodes; i++) {
-            distanceToMouse = nodes[i].pos.distance(pointerIdToPosMap.get(pointerId));
+        for (int i = 0; i < nodes.size(); i++) {
+            distanceToMouse = nodes.get(i).pos.distance(pointerIdToPosMap.get(pointerId));
             if (distanceToMouse < minDistanceToMouse) {
                 minDistanceToMouse = distanceToMouse;
                 nearestNodeId = i;
@@ -455,7 +448,6 @@ public class Pudding {
     public void setBackgroundColor(int backgroundColor) {
         renderer.setBackgroundColor(backgroundColor);
     }
-
 
 
 }

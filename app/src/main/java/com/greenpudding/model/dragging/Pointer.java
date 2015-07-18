@@ -13,7 +13,7 @@ import javax.vecmath.Vector2d;
 /**
  * Created by forkburn on 2015-07-18.
  */
-public class DragPoint {
+public class Pointer {
 
     private Point2d pointerPos;
 
@@ -24,12 +24,14 @@ public class DragPoint {
     private Map<Integer, Vector2d> nodeIdToDisplacementMap = new HashMap<>();
 
 
-    public DragPoint(Point2d pointerPos) {
+    public Pointer(Point2d pointerPos) {
         this.pointerPos = pointerPos;
     }
 
     public void addDraggedNode(Integer nodeId, PuddingNode node) {
         draggedNodeIds.add(nodeId);
+
+        // store the nodes' relative position
         Vector2d displacement = new Vector2d();
         displacement.sub(node.pos, pointerPos);
         nodeIdToDisplacementMap.put(nodeId, displacement);
