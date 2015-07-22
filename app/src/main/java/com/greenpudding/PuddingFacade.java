@@ -10,6 +10,7 @@ import android.hardware.SensorManager;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
+import com.greenpudding.activities.MainActivity;
 import com.greenpudding.model.PuddingModel;
 import com.greenpudding.thread.PuddingRunner;
 import com.greenpudding.util.PuddingConfigurator;
@@ -30,7 +31,7 @@ public class PuddingFacade implements SensorEventListener {
 
     private PuddingRunner puddingRunner;
     private Thread puddingRunnerThread;
-
+    private PuddingConfigurator configurator;
 
     public SharedPreferences getPrefs() {
         return prefs;
@@ -153,7 +154,16 @@ public class PuddingFacade implements SensorEventListener {
     }
 
     public void applyPrefs() {
-        PuddingConfigurator.applyPrefs(pudding, prefs);
+        if (configurator == null) {
+            initConfigurator();
+        }
+        configurator.applyPrefs(pudding);
+    }
+
+    private void initConfigurator() {
+        configurator = new PuddingConfigurator();
+        configurator.setContext(MainActivity.getContext());
+        configurator.setPrefs(prefs);
     }
 
     @Override

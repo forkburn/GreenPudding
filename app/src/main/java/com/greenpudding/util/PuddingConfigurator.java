@@ -10,15 +10,32 @@ import com.greenpudding.model.RenderMode;
 
 public class PuddingConfigurator {
 
+    private Context context;
+    private SharedPreferences prefs;
 
-    public static void applyPrefs(PuddingModel pudding, SharedPreferences prefs) {
-        Context context = MainActivity.getContext();
+    public Context getContext() {
+        return context;
+    }
 
-        pudding.setRadius(prefs.getInt(context.getString(R.string.pref_pudding_radius_key), PuddingModel.DEFAULT_RADIUS));
+    public void setContext(Context context) {
+        this.context = context;
+    }
 
-        pudding.setNumOfNodes(prefs.getInt(context.getString(R.string.pref_number_of_nodes_key), PuddingModel.DEFAULT_NUM_NODES));
+    public SharedPreferences getPrefs() {
+        return prefs;
+    }
 
-        pudding.setBindingElasticity(prefs.getInt(context.getString(R.string.pref_pudding_elasticity_key),
+    public void setPrefs(SharedPreferences prefs) {
+        this.prefs = prefs;
+    }
+
+    public void applyPrefs(PuddingModel pudding) {
+
+        pudding.setRadius(getInt(R.string.pref_pudding_radius_key, PuddingModel.DEFAULT_RADIUS));
+
+        pudding.setNumOfNodes(getInt(R.string.pref_number_of_nodes_key, PuddingModel.DEFAULT_NUM_NODES));
+
+        pudding.setBindingElasticity(getInt(R.string.pref_pudding_elasticity_key,
                 new Double(PuddingModel.DEFAULT_BINDING_ELASTICITY).intValue()));
 
         pudding.setIsGravityEnabled(prefs.getBoolean(context.getString(R.string.pref_is_gravity_enabled_key), PuddingModel.DEFAULT_IS_GRAVITY_ENABLED));
@@ -27,26 +44,43 @@ public class PuddingConfigurator {
 
         // apply the render mode setting
         String renderMode = prefs.getString(context.getString(R.string.pref_render_mode_key), "");
-        String[] validRenderModes = context.getResources().getStringArray(R.array.pref_render_mode_value);
-        if (renderMode.equals(validRenderModes[0])) {
+        String[] renderModeList = context.getResources().getStringArray(R.array.pref_render_mode_value);
+        if (renderMode.equals(renderModeList[0])) {
             pudding.setRenderMode(RenderMode.NORMAL);
-        } else if (renderMode.equals(validRenderModes[1])) {
+        } else if (renderMode.equals(renderModeList[1])) {
             pudding.setRenderMode(RenderMode.WIREFRAME);
         }
 
         // apply the pudding color settings
-        String puddingColorKey = context.getString(R.string.pref_pudding_color_key);
         int defaultPuddingColor = context.getResources().getColor(R.color.color_pudding_default);
-        int puddingColor = prefs.getInt(puddingColorKey, defaultPuddingColor);
+        int puddingColor = getInt(R.string.pref_pudding_color_key, defaultPuddingColor);
         pudding.setColor(puddingColor);
 
         // apply the pudding background color settings
-        String backgroundColorKey = context.getString(R.string.pref_background_color_key);
         int defaultBackgroundColor = context.getResources().getColor(R.color.color_background_default);
-        int backgroundColor = prefs.getInt(backgroundColorKey, defaultBackgroundColor);
+        int backgroundColor = getInt(R.string.pref_background_color_key, defaultBackgroundColor);
         pudding.setBackgroundColor(backgroundColor);
 
         // refresh the position of all nodes
         pudding.refreshNodes();
+
+    }
+
+    /**
+     * read int from prefs without raising exceptions
+     * @param id
+     * @param defaultVal
+     * @return
+     */
+    private int getInt(int id, int defaultVal) {
+        String key = context.getString(id);
+        int result;
+        try {
+            result = prefs.getInt(key, defaultVal);
+        } catch (ClassCastException e) {
+            // in case cannot read the pref value as an int
+            result = defaultVal;
+        }
+        return result;
     }
 }
