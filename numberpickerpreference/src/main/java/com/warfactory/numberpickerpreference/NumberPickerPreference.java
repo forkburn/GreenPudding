@@ -10,18 +10,19 @@ import android.widget.NumberPicker;
 
 public class NumberPickerPreference extends DialogPreference {
 
+    private static int DEFAULT_VAL = 0;
     NumberPicker picker;
     int pickerMinVal;
     int pickerMaxVal;
-    Integer initialValue;
+    int initialValue;
 
     public NumberPickerPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
         setDialogLayoutResource(R.layout.number_picker_pref);
-        readCustomAttrs(attrs);
+        parseCustomAttrs(attrs);
     }
 
-    private void readCustomAttrs(AttributeSet attrs) {
+    private void parseCustomAttrs(AttributeSet attrs) {
         TypedArray array = getContext().getTheme().obtainStyledAttributes(
                 attrs, R.styleable.NumberPickerPref, 0, 0);
         try {
@@ -38,33 +39,32 @@ public class NumberPickerPreference extends DialogPreference {
         this.picker = (NumberPicker) view.findViewById(R.id.pref_num_picker);
         picker.setMaxValue(pickerMaxVal);
         picker.setMinValue(pickerMinVal);
-        if (this.initialValue != null) picker.setValue(initialValue);
+        picker.setValue(initialValue);
     }
 
+
     @Override
-    public void onClick(DialogInterface dialog, int which) {
-        super.onClick(dialog, which);
-        if (which == DialogInterface.BUTTON_POSITIVE) {
-            // make the picker save user input value
+    protected void onDialogClosed(boolean positiveResult) {
+        // When the user selects "OK", persist the new value
+        if (positiveResult) {
+            // clear focus on the picker so that getValue returns the updated input value
             picker.clearFocus();
-            this.initialValue = picker.getValue();
-            persistInt(initialValue);
-            callChangeListener(initialValue);
+            persistInt(picker.getValue());
         }
     }
 
     @Override
-    protected void onSetInitialValue(boolean restorePersistedValue,
-                                     Object defaultValue) {
-        int def = (defaultValue instanceof Number) ? (Integer) defaultValue
-                : (defaultValue != null) ? Integer.parseInt(defaultValue.toString()) : 1;
+    protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
         if (restorePersistedValue) {
-            this.initialValue = getPersistedInt(def);
-        } else this.initialValue = (Integer) defaultValue;
+            this.initialValue = getPersistedInt(DEFAULT_VAL);
+        } else {
+            this.initialValue = (Integer) defaultValue;
+            persistInt(initialValue);
+        }
     }
 
     @Override
     protected Object onGetDefaultValue(TypedArray a, int index) {
-        return a.getInt(index, 1);
+        return a.getInt(index, DEFAULT_VAL);
     }
 }
