@@ -27,7 +27,7 @@
     <string name="pref_number_of_nodes_title">Surface Smoothness</string>
     <string name="pref_number_of_nodes_summary">Adjust number of physical points simulated</string>
     <string name="pref_number_of_nodes_key">numOfNodes</string>
-    <string name="pref_number_of_nodes_default">12</string>
+    <string name="pref_number_of_nodes_default">15</string>
 
 
     <string name="app_desc">Physical simulation of an elastic body.</string>
