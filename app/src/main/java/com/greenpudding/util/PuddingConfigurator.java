@@ -44,11 +44,10 @@ public class PuddingConfigurator {
 
         // apply the render mode setting
         String renderMode = prefs.getString(context.getString(R.string.pref_render_mode_key), "");
-        String[] renderModeList = context.getResources().getStringArray(R.array.pref_render_mode_value);
-        if (renderMode.equals(renderModeList[0])) {
-            pudding.setRenderMode(RenderMode.NORMAL);
-        } else if (renderMode.equals(renderModeList[1])) {
+        if (renderMode.equals(context.getString(R.string.render_mode_wireframe))) {
             pudding.setRenderMode(RenderMode.WIREFRAME);
+        } else {
+            pudding.setRenderMode(RenderMode.NORMAL);
         }
 
         // apply the pudding color settings

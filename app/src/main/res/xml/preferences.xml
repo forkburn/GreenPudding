@@ -3,7 +3,6 @@
     xmlns:custom="http://schemas.android.com/apk/res-auto/com.warfactory.numberpickerpreference">
 
     <PreferenceCategory
-        android:summary="@string/pref_cat_physical_parameters_summary"
 
         android:title="@string/pref_cat_physical_parameters_title">
 
@@ -24,8 +23,8 @@
             android:dialogTitle="@string/pref_pudding_radius_title"
             android:key="@string/pref_pudding_radius_key"
             android:title="@string/pref_pudding_radius_title"
-            custom:maxValue="800"
-            custom:minValue="50" />
+            custom:maxValue="500"
+            custom:minValue="100" />
 
 
         <com.warfactory.numberpickerpreference.NumberPickerPreference
@@ -33,7 +32,7 @@
             android:dialogTitle="@string/pref_pudding_elasticity_title"
             android:key="@string/pref_pudding_elasticity_key"
             android:title="@string/pref_pudding_elasticity_title"
-            custom:maxValue="30"
+            custom:maxValue="20"
             custom:minValue="10" />
 
 
@@ -44,24 +43,21 @@
             android:summary="@string/pref_number_of_nodes_summary"
             android:title="@string/pref_number_of_nodes_title"
             custom:maxValue="20"
-            custom:minValue="5" />
+            custom:minValue="10" />
 
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:summary="@string/pref_cat_appearance_summary"
         android:title="@string/pref_cat_appearance_title">
 
         <net.margaritov.preference.colorpicker.ColorPickerPreference
             android:defaultValue="@color/color_pudding_default"
             android:key="@string/pref_pudding_color_key"
-            android:summary="@string/pref_pudding_color_summary"
             android:title="@string/pref_pudding_color_title" />
 
         <net.margaritov.preference.colorpicker.ColorPickerPreference
             android:defaultValue="@color/color_background_default"
             android:key="@string/pref_background_color_key"
-            android:summary="@string/pref_background_color_summary"
             android:title="@string/pref_background_color_title" />
 
         <ListPreference
@@ -69,7 +65,8 @@
             android:entryValues="@array/pref_render_mode_value"
             android:key="@string/pref_render_mode_key"
             android:persistent="true"
-            android:title="@string/pref_render_mode_title" />
+            android:title="@string/pref_render_mode_title"
+            android:defaultValue="@string/render_mode_normal"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

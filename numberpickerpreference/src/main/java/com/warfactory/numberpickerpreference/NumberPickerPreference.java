@@ -1,10 +1,10 @@
 package com.warfactory.numberpickerpreference;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.NumberPicker;
 
@@ -14,7 +14,7 @@ public class NumberPickerPreference extends DialogPreference {
     NumberPicker picker;
     int pickerMinVal;
     int pickerMaxVal;
-    int initialValue;
+    int currentValue;
 
     public NumberPickerPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -39,7 +39,9 @@ public class NumberPickerPreference extends DialogPreference {
         this.picker = (NumberPicker) view.findViewById(R.id.pref_num_picker);
         picker.setMaxValue(pickerMaxVal);
         picker.setMinValue(pickerMinVal);
-        picker.setValue(initialValue);
+        picker.setValue(currentValue);
+        // do not allow wrap, otherwise input a value smaller than minVal will result in bug
+        picker.setWrapSelectorWheel(false);
     }
 
 
@@ -49,17 +51,18 @@ public class NumberPickerPreference extends DialogPreference {
         if (positiveResult) {
             // clear focus on the picker so that getValue returns the updated input value
             picker.clearFocus();
-            persistInt(picker.getValue());
+            currentValue = picker.getValue();
+            persistInt(currentValue);
         }
     }
 
     @Override
     protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
         if (restorePersistedValue) {
-            this.initialValue = getPersistedInt(DEFAULT_VAL);
+            this.currentValue = getPersistedInt(DEFAULT_VAL);
         } else {
-            this.initialValue = (Integer) defaultValue;
-            persistInt(initialValue);
+            this.currentValue = (Integer) defaultValue;
+            persistInt(currentValue);
         }
     }
 

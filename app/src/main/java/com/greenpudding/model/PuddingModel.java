@@ -232,7 +232,7 @@ public class PuddingModel {
     private void updateVelocity() {
         for (int i = 0; i < nodes.size(); i++) {
             nodes.get(i).veloc.add(nodes.get(i).accel);
-            // apply the damping factor
+            // apply the damping factor to avoid nodes going crazy
             nodes.get(i).veloc.scale(dampingFactor);
         }
     }
@@ -242,9 +242,7 @@ public class PuddingModel {
      */
     private void updatePosition() {
         for (int i = 0; i < nodes.size(); i++) {
-
             nodes.get(i).pos.add(nodes.get(i).veloc);
-
             // if the node is moving out of the valid area
             if (nodes.get(i).pos.x > getBoundingRect().right) {
                 nodes.get(i).pos.x = getBoundingRect().right;
