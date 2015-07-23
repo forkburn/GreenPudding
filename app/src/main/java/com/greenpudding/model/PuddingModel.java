@@ -2,7 +2,6 @@ package com.greenpudding.model;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
-
 import com.greenpudding.model.dragging.DraggingManager;
 import com.greenpudding.util.UndirectedWeightedGraph;
 
@@ -20,8 +19,8 @@ public class PuddingModel {
     public static final double DEFAULT_DAMPING_FACTOR = 0.8f;
     public static final int DEFAULT_RADIUS = 300;
     public static final int DEFAULT_NUM_NODES = 12;
-    public  static final boolean DEFAULT_IS_GRAVITY_ENABLED = true;
-    public  static final boolean DEFAULT_IS_PINNED = false;
+    public static final boolean DEFAULT_IS_GRAVITY_ENABLED = true;
+    public static final boolean DEFAULT_IS_PINNED = false;
 
     // minimal distance between nodes for the elasticity to work. prevents bug due to floating error
     public static final double NODE_DISTANCE_THRESHOLD = 0.01f;
@@ -199,10 +198,20 @@ public class PuddingModel {
         distanceBetween.sub(nodes.get(nodeId1).pos, nodes.get(nodeId2).pos);
 
         // how much has the binding between the 2 nodes been stretched
-        double stretched = distanceBetween.length() - distanceMap.getEdgeWeight(nodeId1, nodeId2);
+        double displacement = distanceBetween.length() - distanceMap.getEdgeWeight(nodeId1, nodeId2);
 
         // Hooke's law. force = k * x; k = elasticity / original length of spring
-        double force = bindingElasticity / distanceMap.getEdgeWeight(nodeId1, nodeId2) * stretched;
+        double k = bindingElasticity / distanceMap.getEdgeWeight(nodeId1, nodeId2);
+
+        double force;
+        if (displacement >= 0) {
+            // when stretched it's a linear spring
+            force = k * displacement;
+        } else {
+            // when compressed it's not. Prevents flipping.
+            force = -k * Math.pow(-displacement, 1.3);
+        }
+
 
         // save the force in the forceMap
         forceMap.setEdgeWeight(nodeId1, nodeId2, force);
@@ -350,7 +359,7 @@ public class PuddingModel {
      * @param y
      * @param pointerId
      */
-    public  void setMousePos(double x, double y, int pointerId) {
+    public void setMousePos(double x, double y, int pointerId) {
         draggingManager.setPointerCurrentPos(pointerId, x, y);
     }
 
@@ -360,11 +369,11 @@ public class PuddingModel {
      * @param x Mouse position where the dragging starts
      * @param y Mouse position where the dragging starts
      */
-    public  void startDragging(double x, double y, int pointerId) {
+    public void startDragging(double x, double y, int pointerId) {
         draggingManager.startDragging(pointerId, x, y, nodes);
     }
 
-    public  void stopDragging(int pointerId) {
+    public void stopDragging(int pointerId) {
         draggingManager.stopDragging(pointerId);
     }
 
