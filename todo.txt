@@ -2,4 +2,4 @@ pudding tend to flip. modify physics so that when a link is compressed much, it'
 
 allow picture as background
 
-
+control FPS
